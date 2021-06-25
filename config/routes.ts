@@ -22,6 +22,12 @@
     component: './Welcome',
   },
   {
+    path: '/index',
+    name: 'index',
+    icon: 'smile',
+    component: './Index/',
+  },
+  {
     path: '/admin',
     name: 'admin',
     icon: 'crown',
@@ -44,7 +50,7 @@
   },
   {
     path: '/',
-    redirect: '/welcome',
+    redirect: '/index',
   },
   {
     component: './404',
