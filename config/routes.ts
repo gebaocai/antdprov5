@@ -43,6 +43,25 @@
     ],
   },
   {
+    path: '/system',
+    name: 'system',
+    icon: 'setting',
+    access: 'canAdmin',
+    component: './system/user',
+    routes: [
+      {
+        path: '/system/user',
+        name: 'user',
+        component: './system/user/',
+      },
+      {
+        path: '/system/depart',
+        name: 'depart',
+        component: './system/depart/',
+      },
+    ],
+  },
+  {
     name: 'list.table-list',
     icon: 'table',
     path: '/list',
