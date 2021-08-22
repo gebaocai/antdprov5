@@ -200,7 +200,56 @@ const Login: React.FC = () => {
                     },
                   ]}
                 />
+                <ProForm.Group>
+                  <ProFormText
+                    name="captcha"
+                    width="SM"
+                    fieldProps={{
+                      size: 'large',
+                      prefix: <UserOutlined className={styles.prefixIcon} />,
+                    }}
+                    placeholder={intl.formatMessage({
+                      id: 'pages.login.captcha.placeholder',
+                      defaultMessage: '请输入验证码',
+                    })}
+                    rules={[
+                      {
+                        required: true,
+                        message: (
+                          <FormattedMessage
+                            id="pages.login.username.required"
+                            defaultMessage="请输入验证码!"
+                          />
+                        ),
+                      },
+                    ]}
+                  />
+
+                  <ProFormText
+                    name="captcha"
+                    fieldProps={{
+                      size: 'large',
+                      prefix: <UserOutlined className={styles.prefixIcon} />,
+                    }}
+                    placeholder={intl.formatMessage({
+                      id: 'pages.login.captcha.placeholder',
+                      defaultMessage: '请输入验证码',
+                    })}
+                    rules={[
+                      {
+                        required: true,
+                        message: (
+                          <FormattedMessage
+                            id="pages.login.username.required"
+                            defaultMessage="请输入验证码!"
+                          />
+                        ),
+                      },
+                    ]}
+                  />
+                </ProForm.Group>
               </>
+              
             )}
 
             {status === 'error' && loginType === 'mobile' && <LoginMessage content="验证码错误" />}

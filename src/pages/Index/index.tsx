@@ -1,112 +1,161 @@
-import React, { useState } from 'react';
-import ProCard, { StatisticCard } from '@ant-design/pro-card';
-import RcResizeObserver from 'rc-resize-observer';
+import { useRequest } from 'umi';
 
-const { Statistic } = StatisticCard;
+import { fakeChartData } from './service';
+import { GridContent } from '@ant-design/pro-layout';
+import type { RadioChangeEvent } from 'antd/es/radio';
+import type { RangePickerProps } from 'antd/es/date-picker/generatePicker';
 
-export default () => {
-  const [responsive, setResponsive] = useState(false);
+import { FC, Suspense, useState } from 'react';
+import { EllipsisOutlined } from '@ant-design/icons';
+import { Col, Dropdown, Menu, Row } from 'antd';
+import PageLoading from './components/PageLoading';
+import type { IndexData } from './data.d';
+import styles from './style.less';
+import IntroduceRow from './components/IntroduceRow';
+import SalesCard from './components/SalesCard';
+import TopSearch from './components/TopSearch';
+import ProportionSales from './components/ProportionSales';
+import OfflineData from './components/OfflineData';
+
+import { getTimeDistance } from './utils/utils';
+
+type RangePickerValue = RangePickerProps<moment.Moment>['value'];
+
+type IndexProps = {
+  index: IndexData;
+  loading: boolean;
+}
+
+type SalesType = 'all' | 'online' | 'stores';
+
+const Index: FC<IndexProps> = () => {
+
+  const [salesType, setSalesType] = useState<SalesType>('all');
+  const [currentTabKey, setCurrentTabKey] = useState<string>('');
+  const [rangePickerValue, setRangePickerValue] = useState<RangePickerValue>(
+    getTimeDistance('year'),
+  );
+
+  const { loading, data } = useRequest(fakeChartData);
+
+  const selectDate = (type: TimeType) => {
+    setRangePickerValue(getTimeDistance(type));
+  };
+
+  const handleRangePickerChange = (value: RangePickerValue) => {
+    setRangePickerValue(value);
+  };
+
+  const isActive = (type: TimeType) => {
+    if (!rangePickerValue) {
+      return '';
+    }
+    const value = getTimeDistance(type);
+    if (!value) {
+      return '';
+    }
+    if (!rangePickerValue[0] || !rangePickerValue[1]) {
+      return '';
+    }
+    if (
+      rangePickerValue[0].isSame(value[0] as moment.Moment, 'day') &&
+      rangePickerValue[1].isSame(value[1] as moment.Moment, 'day')
+    ) {
+      return styles.currentDate;
+    }
+    return '';
+  };
+
+  let salesPieData;
+  if (salesType === 'all') {
+    salesPieData = data?.salesTypeData;
+  } else {
+    salesPieData = salesType === 'online' ? data?.salesTypeDataOnline : data?.salesTypeDataOffline;
+  }
+
+  const menu = (
+    <Menu>
+      <Menu.Item>操作一</Menu.Item>
+      <Menu.Item>操作二</Menu.Item>
+    </Menu>
+  );
+
+  const dropdownGroup = (
+    <span className={styles.iconGroup}>
+      <Dropdown overlay={menu} placement="bottomRight">
+        <EllipsisOutlined />
+      </Dropdown>
+    </span>
+  );
+
+  const handleChangeSalesType = (e: RadioChangeEvent) => {
+    setSalesType(e.target.value);
+  };
+
+  const handleTabChange = (key: string) => {
+    setCurrentTabKey(key);
+  };
+
+  const activeKey = currentTabKey || (data?.offlineData[0] && data?.offlineData[0].name) || '';
 
   return (
-    <RcResizeObserver
-      key="resize-observer"
-      onResize={(offset) => {
-        setResponsive(offset.width < 596);
-      }}
-    >
-      <ProCard split={responsive ? 'horizontal' : 'vertical'}>
-        <StatisticCard
-          colSpan={responsive ? 24 : 6}
-          title="财年业绩目标"
-          statistic={{
-            value: 82.6,
-            suffix: '亿',
-            description: <Statistic title="日同比" value="6.47%" trend="up" />,
+    <GridContent>
+      <>
+        <Suspense fallback={<PageLoading />}>
+          <IntroduceRow loading={loading} visitData={data?.visitData || []} />
+        </Suspense>
+
+        <Suspense fallback={null}>
+          <SalesCard
+            rangePickerValue={rangePickerValue}
+            salesData={data?.salesData || []}
+            isActive={isActive}
+            handleRangePickerChange={handleRangePickerChange}
+            loading={loading}
+            selectDate={selectDate}
+          />
+        </Suspense>
+
+        <Row
+          gutter={24}
+          style={{
+            marginTop: 24,
           }}
-          chart={
-            <img
-              src="https://gw.alipayobjects.com/zos/alicdn/PmKfn4qvD/mubiaowancheng-lan.svg"
-              alt="进度条"
-              width="100%"
-            />
-          }
-          footer={
-            <>
-              <Statistic value="70.98%" title="财年业绩完成率" layout="horizontal" />
-              <Statistic value="86.98%" title="去年同期业绩完成率" layout="horizontal" />
-              <Statistic value="88.98%" title="前年同期业绩完成率" layout="horizontal" />
-            </>
-          }
-        />
-        <StatisticCard.Group
-          colSpan={responsive ? 24 : 18}
-          direction={responsive ? 'column' : undefined}
         >
-          <StatisticCard
-            statistic={{
-              title: '财年总收入',
-              value: 601987768,
-              description: <Statistic title="日同比" value="6.15%" trend="up" />,
-            }}
-            chart={
-              <img
-                src="https://gw.alipayobjects.com/zos/alicdn/zevpN7Nv_/xiaozhexiantu.svg"
-                alt="折线图"
-                width="100%"
+          <Col xl={12} lg={24} md={24} sm={24} xs={24}>
+            <Suspense fallback={null}>
+              <TopSearch
+                loading={loading}
+                visitData2={data?.visitData2 || []}
+                searchData={data?.searchData || []}
+                dropdownGroup={dropdownGroup}
               />
-            }
-          >
-            <Statistic
-              title="大盘总收入"
-              value={1982312}
-              layout="vertical"
-              description={<Statistic title="日同比" value="6.15%" trend="down" />}
-            />
-          </StatisticCard>
-          <StatisticCard
-            statistic={{
-              title: '当日排名',
-              value: 6,
-              description: <Statistic title="日同比" value="3.85%" trend="down" />,
-            }}
-            chart={
-              <img
-                src="https://gw.alipayobjects.com/zos/alicdn/zevpN7Nv_/xiaozhexiantu.svg"
-                alt="折线图"
-                width="100%"
+            </Suspense>
+          </Col>
+          <Col xl={12} lg={24} md={24} sm={24} xs={24}>
+            <Suspense fallback={null}>
+              <ProportionSales
+                dropdownGroup={dropdownGroup}
+                salesType={salesType}
+                loading={loading}
+                salesPieData={salesPieData || []}
+                handleChangeSalesType={handleChangeSalesType}
               />
-            }
-          >
-            <Statistic
-              title="近7日收入"
-              value={17458}
-              layout="vertical"
-              description={<Statistic title="日同比" value="6.47%" trend="up" />}
-            />
-          </StatisticCard>
-          <StatisticCard
-            statistic={{
-              title: '财年业绩收入排名',
-              value: 2,
-              description: <Statistic title="日同比" value="6.47%" trend="up" />,
-            }}
-            chart={
-              <img
-                src="https://gw.alipayobjects.com/zos/alicdn/zevpN7Nv_/xiaozhexiantu.svg"
-                alt="折线图"
-                width="100%"
-              />
-            }
-          >
-            <Statistic
-              title="月付费个数"
-              value={601}
-              layout="vertical"
-              description={<Statistic title="日同比" value="6.47%" trend="down" />}
-            />
-          </StatisticCard>
-        </StatisticCard.Group>
-      </ProCard>
-    </RcResizeObserver>
+            </Suspense>
+          </Col>
+        </Row>
+
+        <Suspense fallback={null}>
+          <OfflineData
+            activeKey={activeKey}
+            loading={loading}
+            offlineData={data?.offlineData || []}
+            offlineChartData={data?.offlineChartData || []}
+            handleTabChange={handleTabChange}
+          />
+        </Suspense>
+      </>
+    </GridContent>
   );
-};
+}; 
+export default Index;

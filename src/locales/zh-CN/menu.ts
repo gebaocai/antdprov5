@@ -1,6 +1,5 @@
 export default {
   'menu.welcome': '欢迎',
-  'menu.index': '首页',
   'menu.more-blocks': '更多区块',
   'menu.home': '首页',
   'menu.admin': '管理页',
@@ -53,4 +52,5 @@ export default {
   'menu.system': '系统管理',
   'menu.system.user': '用户管理',
   'menu.system.depart': '部门管理',
+  'menu.index': '首页',
 };
