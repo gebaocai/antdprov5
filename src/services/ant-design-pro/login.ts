@@ -19,3 +19,13 @@ export async function getFakeCaptcha(
     ...(options || {}),
   });
 }
+
+export async function getRandomImage(
+  checkKey:string,
+  options?: { [key: string]: any },
+) {
+  return request('/api/auth/randomImage/'+checkKey, {
+    method: 'GET',
+    ...(options || {}),
+  });
+}
