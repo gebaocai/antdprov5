@@ -1,4 +1,4 @@
-import { useRequest } from 'umi';
+import type { ProFormInstance } from '@ant-design/pro-form';
 import {
   AlipayCircleOutlined,
   LockOutlined,
@@ -9,7 +9,7 @@ import {
   SmileOutlined,
 } from '@ant-design/icons';
 import { Alert, Space, message, Tabs } from 'antd';
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import ProForm, { ProFormCaptcha, ProFormCheckbox, ProFormText } from '@ant-design/pro-form';
 import { useIntl, Link, history, FormattedMessage, SelectLang, useModel } from 'umi';
 import Footer from '@/components/Footer';
@@ -49,6 +49,7 @@ const Login: React.FC = () => {
   const [type, setType] = useState<string>('account');
   const { initialState, setInitialState } = useModel('@@initialState');
   const [randomImageUrl, setRandomImageUrl] = useState("");
+  const [checkKey, setCheckKey] = useState("");
   
 
   const intl = useIntl();
@@ -92,13 +93,17 @@ const Login: React.FC = () => {
   };
   const { status, type: loginType } = userLoginState;
 
-  
+  const formRef = useRef<ProFormInstance>();
   // setRandomImageUrl(captchaImage + currdatetime);
   // setRandomImageUrl(url);
   const changeRandomImage = () => {
     const captchaImage = "/api/auth/randomImage/";
-    const currdatetime = new Date().getTime();
+    const currdatetime = new Date().getTime()+"";
+    setCheckKey(currdatetime);
     setRandomImageUrl(captchaImage + currdatetime);
+    formRef?.current?.setFieldsValue({
+      checkKey: checkKey
+    });
     // console.log("url is "+ url);
     // setRandomImageUrl(url);
   }
@@ -127,8 +132,9 @@ const Login: React.FC = () => {
 
         <div className={styles.main}>
           <ProForm
+            formRef={formRef}
             initialValues={{
-              autoLogin: true,
+              autoLogin: true
             }}
             submitter={{
               searchConfig: {
@@ -224,12 +230,13 @@ const Login: React.FC = () => {
                 <ProForm.Group size="large">
                   <Row gutter={16}>
                     <Col span={16}>
-                      <ProFormText width="md" name="company" 
+                      <ProFormText width="md" name="captcha" 
                         fieldProps={{
                           size: 'large',
                           prefix: <SmileOutlined className={styles.prefixIcon} />,
                         }}
                         placeholder="请输入验证码" />
+                      <ProFormText name="checkKey" hidden/>
                     </Col>
                     <Col span={8}>
                       <Image onClick={changeRandomImage}
