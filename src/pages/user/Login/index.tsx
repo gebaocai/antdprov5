@@ -49,7 +49,7 @@ const Login: React.FC = () => {
   const [type, setType] = useState<string>('account');
   const { initialState, setInitialState } = useModel('@@initialState');
   const [randomImageUrl, setRandomImageUrl] = useState("");
-  const [checkKey, setCheckKey] = useState("");
+  // const [checkKey, setCheckKey] = useState("");
   
 
   const intl = useIntl();
@@ -69,11 +69,12 @@ const Login: React.FC = () => {
     try {
       // 登录
       const msg = await login({ ...values, type });
-      if (msg.status === 'ok') {
+      if (msg.code === 200) {
         const defaultloginSuccessMessage = intl.formatMessage({
           id: 'pages.login.success',
           defaultMessage: '登录成功！',
         });
+        localStorage.setItem('token', msg.data?.token);
         message.success(defaultloginSuccessMessage);
         await fetchUserInfo();
         goto();
@@ -99,12 +100,12 @@ const Login: React.FC = () => {
   const changeRandomImage = () => {
     const captchaImage = "/api/auth/randomImage/";
     const currdatetime = new Date().getTime()+"";
-    setCheckKey(currdatetime);
+    // setCheckKey(currdatetime);
     setRandomImageUrl(captchaImage + currdatetime);
     formRef?.current?.setFieldsValue({
-      checkKey: checkKey
+      checkKey: currdatetime
     });
-    // console.log("url is "+ url);
+    console.log("url is "+ currdatetime);
     // setRandomImageUrl(url);
   }
   useEffect(() => {
@@ -184,7 +185,7 @@ const Login: React.FC = () => {
             {type === 'account' && (
               <>
                 <ProFormText
-                  name="username"
+                  name="usernameOrEmailOrPhone"
                   fieldProps={{
                     size: 'large',
                     prefix: <UserOutlined className={styles.prefixIcon} />,
@@ -236,7 +237,7 @@ const Login: React.FC = () => {
                           prefix: <SmileOutlined className={styles.prefixIcon} />,
                         }}
                         placeholder="请输入验证码" />
-                      <ProFormText name="checkKey" hidden/>
+                      <ProFormText name="checkKey" hidden />
                     </Col>
                     <Col span={8}>
                       <Image onClick={changeRandomImage}
