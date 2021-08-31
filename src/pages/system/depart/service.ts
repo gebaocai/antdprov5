@@ -1,7 +1,7 @@
 // @ts-ignore
 /* eslint-disable */
 import { request } from 'umi';
-import { TableListItem } from './data';
+import { TableListItem, DepartData } from './data';
 
 /** 新建规则 PUT /api/rule */
 export async function updateRule(options?: { [key: string]: any }) {
@@ -58,6 +58,17 @@ export async function permissionList(options?: { [key: string]: any }) {
 export async function departPermission(options?: { [key: string]: any }) {
   return request<Record<string, any>>('/api/departPermission', {
     method: 'GET',
+    ...(options || {}),
+  });
+}
+
+export async function editDepart(body: DepartData, options?: { [key: string]: any }) {
+  return request<Record<string, any>>('/api/sys/sysDepart/edit', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    data: body,
     ...(options || {}),
   });
 }

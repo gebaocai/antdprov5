@@ -5,6 +5,8 @@ import {DepartData} from '../data.d';
 import { DataItem } from '@antv/g2plot/esm/interface/config';
 export { DataItem };
 import { FormInstance } from 'antd/lib/form';
+import { editDepart } from '../service'
+import { useRequest } from 'umi';
 
 type EditFormProps = {
   selectedKeys: React.Key[];
@@ -17,9 +19,14 @@ const { TextArea } = Input;
 const EditDepartForm: React.FC<EditFormProps> = (props) => {
   const { selectedKeys, loading, model} = props;
 
-  const onFinish = (values: any) => {
+  const onFinish = (values: DepartData) => {
     console.log('Success:', values);
+    run(values);
   };
+
+  const { run } = useRequest(editDepart, {
+    manual: true,
+  });
 
   const onFinishFailed = (errorInfo: any) => {
     console.log('Failed:', errorInfo);
@@ -71,10 +78,18 @@ const EditDepartForm: React.FC<EditFormProps> = (props) => {
             ref={formRef}
             labelCol={labelCol}
             wrapperCol={wrapperCol}
-            initialValues={{ departName:model.departName, phone:model.phone}}
+            initialValues={model}
             onFinish={onFinish}
             onFinishFailed={onFinishFailed}
           >
+          
+            <Form.Item
+              label="机构名称"
+              name="id"
+            >
+              <Input hidden />
+            </Form.Item>
+
             <Form.Item
               label="机构名称"
               name="departName"
