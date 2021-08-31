@@ -28,7 +28,7 @@ export async function removeRule(options?: { [key: string]: any }) {
 }
 
 export async function departList(options?: { [key: string]: any }) {
-  return request<Record<string, any>>('/api/departList', {
+  return request<Record<string, any>>('/api/sys/sysDepart/treeList', {
     method: 'GET',
     ...(options || {}),
   });
@@ -40,11 +40,10 @@ export async function depart(
   },
   options?: { [key: string]: any },
 ) {
-  return request<Record<string, any>>('/api/depart', {
+  return request<Record<string, any>>('/api/sys/sysDepart/info', {
     method: 'GET',
-    params: {
-      ...params,
-    },
+    // params: params,
+    params,
     ...(options || {}),
   });
 }

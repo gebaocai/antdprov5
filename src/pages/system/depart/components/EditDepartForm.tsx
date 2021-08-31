@@ -71,7 +71,7 @@ const EditDepartForm: React.FC<EditFormProps> = (props) => {
             ref={formRef}
             labelCol={labelCol}
             wrapperCol={wrapperCol}
-            initialValues={{ remember: true , departName:model.title, phone:model.phone}}
+            initialValues={{ departName:model.departName, phone:model.phone}}
             onFinish={onFinish}
             onFinishFailed={onFinishFailed}
           >

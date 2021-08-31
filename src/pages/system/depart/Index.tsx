@@ -52,7 +52,7 @@ const TableList: React.FC = () => {
     setSelectedTitle(info.node.title);
 
     detailDepart.run( {
-      id: info.node.key
+      id : info.node.id
     },);
 
     permissionListReq.run();

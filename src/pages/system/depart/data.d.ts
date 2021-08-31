@@ -36,7 +36,7 @@ export type TableListParams = {
 };
 
 export interface DepartData {
-  title?: string;
+  departName?: string;
   key?: string;
   phone?: string;
 }
