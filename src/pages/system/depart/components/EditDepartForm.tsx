@@ -1,5 +1,5 @@
 import React from 'react';
-import { Space, Row, Col, Tree, Tabs, Button, Card } from 'antd';
+import { Space, Row, Col, Tree, Tabs, Button, Card, message } from 'antd';
 import { Spin, Form, Input, Checkbox,Radio, InputNumber, Empty } from 'antd';
 import {DepartData} from '../data.d';
 import { DataItem } from '@antv/g2plot/esm/interface/config';
@@ -19,6 +19,8 @@ const { TextArea } = Input;
 const EditDepartForm: React.FC<EditFormProps> = (props) => {
   const { selectedKeys, loading, model} = props;
 
+  console.log("model is:" + model);
+
   const onFinish = (values: DepartData) => {
     console.log('Success:', values);
     run(values);
@@ -26,6 +28,8 @@ const EditDepartForm: React.FC<EditFormProps> = (props) => {
 
   const { run } = useRequest(editDepart, {
     manual: true,
+    onSuccess : ()=>{message.success('修改成功');},
+    onError : ()=>{message.success('修改失败');},
   });
 
   const onFinishFailed = (errorInfo: any) => {
