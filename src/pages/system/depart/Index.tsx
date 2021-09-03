@@ -65,9 +65,9 @@ const TableList: React.FC = () => {
     console.log('onSelect', info);
     setSelectedKeys(selectedKeysValue);
     setSelectedTitle(info.node.title);
-    // detailDepart.run( {
-    //   id : info.node.id
-    // },);
+    detailDepart.run( {
+      id : info.node.id
+    },);
 
     permissionListReq.run();
 
@@ -121,7 +121,7 @@ const TableList: React.FC = () => {
     manual: true,
     onSuccess: (data) => {
       console.log(data);
-      // formRef?.current?.setFieldsValue(data);
+      formRef?.current?.setFieldsValue(data);
     }
   });
   const permissionListReq = useRequest(permissionList, {manual: true});
@@ -163,7 +163,7 @@ const TableList: React.FC = () => {
           <Tabs defaultActiveKey="1" onChange={callback}>
             <TabPane tab="基本信息" key="1">
               {/* <EditDepartForm selectedKeys={selectedKeys} loading={detailDepart.loading} model={detailDepart.data}></EditDepartForm> */}
-              {/* <Spin spinning={detailDepart.loading}> */}
+              <Spin spinning={detailDepart.loading}>
                 {selectedKeys.length>0?
                     <Card bordered={false}>
                       
@@ -172,14 +172,9 @@ const TableList: React.FC = () => {
                         formRef={formRef}
                         labelCol={{ span: 4 }}
                         wrapperCol={{ span: 4 }}
-                        // initialValues={detailDepart.data}
+                        initialValues={detailDepart.data}
                         onFinish={async () => { onFinish}}
                         onFinishFailed={onFinishFailed}
-                        request={()=> 
-                          request("/api/sys/sysDepart/info?id=1427796982902165504").then(function(res) {
-                            return res.data;
-                          })
-                        }
                       >
                         <ProFormText name="id" hidden/>
                         <ProFormText
@@ -249,7 +244,7 @@ const TableList: React.FC = () => {
 
                     
             }
-                    {/* </Spin> */}
+                    </Spin>
             </TabPane>
             <TabPane tab="部门权限" key="2">
               <EditDepartPermissionForm selectedKeys={selectedKeys} loading={permissionListReq.loading} permissionList={permissionListReq.data} departPermission={departPermissionReq.data}></EditDepartPermissionForm>
