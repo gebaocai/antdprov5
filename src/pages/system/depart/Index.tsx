@@ -1,5 +1,5 @@
 import { useRequest } from 'umi';
-import { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { Space, Row, Col, Tree, Tabs, Button, Card, Spin, message } from 'antd';
 import { depart, departList} from './service';
 import { permissionList, departPermission, editDepart} from './service';
@@ -22,6 +22,7 @@ import ProForm, {
   LoginForm,
 } from '@ant-design/pro-form';
 import request from '@/utils/request';
+import { FormInstance } from 'antd/es/form';
 
 
 const { TabPane } = Tabs;
@@ -32,7 +33,7 @@ const TableList: React.FC = () => {
   const [selectedKeys, setSelectedKeys] = useState<React.Key[]>([]);
   const [selectedTitle, setSelectedTitle] = useState<String>();
 
-  const formRef = useRef<ProFormInstance>();
+  const formRef = React.createRef<FormInstance>();
   
   const callback = (key:any) => {
     console.log(key);
@@ -167,13 +168,13 @@ const TableList: React.FC = () => {
                 {selectedKeys.length>0?
                     <Card bordered={false}>
                       
-                      <ProForm
+                      <Form
                         name="basic"
-                        formRef={formRef}
+                        ref={formRef}
                         labelCol={{ span: 4 }}
                         wrapperCol={{ span: 4 }}
                         initialValues={detailDepart.data}
-                        onFinish={async () => { onFinish}}
+                        onFinish={onFinish}
                         onFinishFailed={onFinishFailed}
                       >
                         <ProFormText name="id" hidden/>
@@ -195,7 +196,7 @@ const TableList: React.FC = () => {
 
                         <Form.Item
                           label="电话"
-                          name="phone"
+                          name="mobile"
                         >
                           <Input placeholder="请输入电话"/>
                         </Form.Item>
@@ -216,7 +217,7 @@ const TableList: React.FC = () => {
 
                         <Form.Item
                           label="排序"
-                          name="sort"
+                          name="departOrder"
                         >
                           <InputNumber defaultValue={0}/>
                         </Form.Item>
@@ -236,12 +237,11 @@ const TableList: React.FC = () => {
                             取消
                           </Button>
                         </Form.Item>
-                      </ProForm>
+                      </Form>
                     </Card> :
                     <Card>
                       <Empty description="请先选择一个部门!" />
                     </Card>
-
                     
             }
                     </Spin>
