@@ -180,6 +180,11 @@ export default defineConfig({
           name: 'depart',
           component: './system/depart/',
         },
+        {
+          path: '/system/permission',
+          name: 'permission',
+          component: './system/permission/',
+        },
       ],
     },
     {
