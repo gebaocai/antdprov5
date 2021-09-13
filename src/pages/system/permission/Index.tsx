@@ -23,8 +23,10 @@ import ProForm, {
 } from '@ant-design/pro-form';
 import request from '@/utils/request';
 import { FormInstance } from 'antd/es/form';
-import { Table } from 'antd';
+import { Table, Divider, Menu, Dropdown } from 'antd';
 import { ColumnsType } from 'antd/es/table';
+import { DownOutlined } from '@ant-design/icons';
+import { FormattedMessage } from 'umi';
 
 
 // const data:TableListItem[] = [
@@ -43,17 +45,17 @@ const columns: ColumnsType<TableListItem> = [
     title: '菜单类型',
     dataIndex: 'menuType',
     key: 'menuType',
-    // customRender: function(text) {
-    //   if (text == 0) {
-    //     return '菜单'
-    //   } else if (text == 1) {
-    //     return '菜单'
-    //   } else if (text == 2) {
-    //     return '按钮/权限'
-    //   } else {
-    //     return text
-    //   }
-    // }
+    render: function(text) {
+      if (text == 0) {
+        return '菜单'
+      } else if (text == 1) {
+        return '菜单'
+      } else if (text == 2) {
+        return '按钮/权限'
+      } else {
+        return text
+      }
+    }
   },/*{
     title: '权限编码',
     dataIndex: 'perms',
@@ -63,32 +65,62 @@ const columns: ColumnsType<TableListItem> = [
     dataIndex: 'icon',
     key: 'icon'
   },
-  // {
-  //   title: '组件',
-  //   dataIndex: 'component',
-  //   key: 'component',
-  //   scopedSlots: { customRender: 'component' }
-  // },
-  // {
-  //   title: '路径',
-  //   dataIndex: 'url',
-  //   key: 'url',
-  //   scopedSlots: { customRender: 'url' }
-  // },
-  // {
-  //   title: '排序',
-  //   dataIndex: 'sortNo',
-  //   key: 'sortNo'
-  // },
-  // {
-  //   title: '操作',
-  //   dataIndex: 'action',
-  //   fixed: true,
-  //   scopedSlots: { customRender: 'action' },
-  //   // align: 'center',
-  //   width: 150
-  // }
+  {
+    title: '组件',
+    dataIndex: 'component',
+    key: 'component',
+    ellipsis: true,
+  },
+  {
+    title: '路径',
+    dataIndex: 'url',
+    key: 'url',
+    ellipsis: true,
+  },
+  {
+    title: '排序',
+    dataIndex: 'sortNo',
+    key: 'sortNo',
+    width: 70
+  },
+  {
+    title: '操作',
+    dataIndex: 'action',
+    fixed: true,
+    render: () => (
+      <Space size="middle">
+        <a>编辑</a>
+        <Divider type="vertical" />
+        <Dropdown overlay={menu}>
+          <a className="ant-dropdown-link" onClick={e => e.preventDefault()}>
+          更多 <DownOutlined />
+          </a>
+        </Dropdown>
+      </Space>
+    ),
+    // align: 'center',
+    // width: 150
+  }
 ];
+
+const menu = (
+  <Menu>
+    <Menu.Item key="0">
+      {/* <a target="_blank" rel="noopener noreferrer" href="https://www.antgroup.com"> */}
+        详情
+      {/* </a> */}
+    </Menu.Item>
+    <Menu.Item key="1">
+      {/* <a target="_blank" rel="noopener noreferrer" href="https://www.aliyun.com"> */}
+        添加下级
+      {/* </a> */}
+    </Menu.Item>
+    <Menu.Divider />
+    <Menu.Item key="3" disabled>
+      删除
+    </Menu.Item>
+  </Menu>
+);
 
 const TableList: React.FC = () => {
 

@@ -4,7 +4,7 @@ export interface TableListItem {
   name: string;
   icon: string;
   menuType: number;
-  // sortNo: number;
+  sortNo: number;
 };
 
 export type TableListPagination = {
