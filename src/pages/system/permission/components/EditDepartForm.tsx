@@ -1,7 +1,7 @@
 import React from 'react';
 import { Space, Row, Col, Tree, Tabs, Button, Card, message } from 'antd';
 import { Spin, Form, Input, Checkbox,Radio, InputNumber, Empty } from 'antd';
-import {DepartData} from '../data.d';
+import {DepartData} from '../data';
 import { DataItem } from '@antv/g2plot/esm/interface/config';
 export { DataItem };
 import { FormInstance } from 'antd/lib/form';

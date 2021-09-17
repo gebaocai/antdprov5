@@ -1,53 +1,37 @@
 import { useRequest } from 'umi';
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState } from 'react';
 import { Space, Row, Col, Tree, Tabs, Button, Card, Spin, message } from 'antd';
-import { depart, permissionTree} from './service';
-import { permissionList, departPermission, editDepart} from './service';
-import CreateDepartForm  from './components/CreateDepartForm';
-import EditDepartPermissionForm  from './components/EditDepartPermissionForm';
-import styles from './style.less';
-import { Form, Input, Checkbox,Radio, InputNumber, Empty, Alert } from 'antd';
+import { permissionTree} from './service';
 import {TableListItem} from './data';
-import type { ProFormInstance } from '@ant-design/pro-form';
-import ProForm, {
-  ModalForm,
-  DrawerForm,
-  QueryFilter,
-  LightFilter,
-  StepsForm,
-  ProFormText,
-  ProFormDateRangePicker,
-  ProFormSelect,
-  ProFormRadio,
-  LoginForm,
-} from '@ant-design/pro-form';
-import request from '@/utils/request';
-import { FormInstance } from 'antd/es/form';
+
 import { Table, Divider, Menu, Dropdown } from 'antd';
 import { ColumnsType } from 'antd/es/table';
 import { DownOutlined } from '@ant-design/icons';
-import { FormattedMessage } from 'umi';
-import { Drawer} from 'antd';
-
-
-// const data:TableListItem[] = [
-//   {name: "a",
-//   menuType: 1,
-//   icon: "",
-//   key: "1"}
-// ];
-
-
+import { Form, Input, Checkbox, Drawer, Radio, Switch} from 'antd';
+import { DrawerProps } from 'antd/es/drawer';
 
 const TableList: React.FC = () => {
 
   const {loading, data} = useRequest(permissionTree);
   const [visible, setVisible] = useState(false);
+  const [value, setValue] = React.useState(1);
   const showDrawer = () => {
     setVisible(true);
   };
   const onClose = () => {
     setVisible(false);
+  };
+  const onChange = e => {
+    console.log('radio checked', e.target.value);
+    setValue(e.target.value);
+  };
+
+  const layout = {
+    labelCol: { span: 8 },
+    wrapperCol: { span: 16 },
+  };
+  const tailLayout = {
+    wrapperCol: { offset: 8, span: 16 },
   };
 
   const columns: ColumnsType<TableListItem> = [
@@ -137,6 +121,7 @@ const TableList: React.FC = () => {
     </Menu>
   );
 
+
   return (
     <>
      <Card>
@@ -146,10 +131,98 @@ const TableList: React.FC = () => {
         dataSource={data} 
         pagination={false} />
      </Card>
-     <Drawer title="Basic Drawer" placement="right" onClose={onClose} visible={visible}>
-      <p>Some contents...</p>
-      <p>Some contents...</p>
-      <p>Some contents...</p>
+     <Drawer 
+        title="Basic Drawer" 
+        placement="right"
+        width='736px'
+        onClose={onClose} 
+        visible={visible}>
+          <Card>
+            
+       <Form {...layout}>
+        <Form.Item
+          label="菜单类型"
+          name="MenuType"
+        >
+          <Radio.Group onChange={onChange} value={value}>
+            <Radio value={1}>一级菜单</Radio>
+            <Radio value={2}>子菜单</Radio>
+            <Radio value={3}>按钮/权限</Radio>
+          </Radio.Group>
+        </Form.Item>
+        <Form.Item
+          label="菜单名称"
+          name="name"
+          rules={[{ required: true, message: '请输入菜单名称!' }]}
+        >
+          <Input/>
+        </Form.Item>
+        <Form.Item
+          label="菜单路径"
+          name="url"
+          rules={[{ required: true, message: '请输入菜单路径!' }]}
+        >
+          <Input/>
+        </Form.Item>
+        <Form.Item
+          label="前端组件"
+          name="componentName"
+          rules={[{ required: true, message: '请输入前端组件!' }]}
+        >
+          <Input/>
+        </Form.Item>
+        <Form.Item
+          label="默认跳转地址"
+          name="redirect"
+          tooltip="请转入路由器参数redirect"
+        >
+          <Input/>
+        </Form.Item>
+        <Form.Item
+          label="菜单图标"
+          name="icon"
+        >
+          <Input/>
+        </Form.Item>
+        <Form.Item
+          label="排序"
+          name="sortNo"
+        >
+          <Input/>
+        </Form.Item>
+        <Form.Item
+          label="是否路由菜单"
+          name="redirectMenu"
+        >
+          <Switch checkedChildren="是" unCheckedChildren="否" defaultChecked />
+        </Form.Item>
+        <Form.Item
+          label="隐藏路由"
+        >
+          <Switch checkedChildren="是" unCheckedChildren="否" />
+        </Form.Item>
+        <Form.Item
+          label="是否缓存路由"
+        >
+          <Switch checkedChildren="是" unCheckedChildren="否" defaultChecked />
+        </Form.Item>
+        <Form.Item
+          label="聚合路由"
+        >
+          <Switch checkedChildren="是" unCheckedChildren="否" defaultChecked />
+        </Form.Item>
+        <Form.Item
+          label="打开方式"
+        >
+          <Switch checkedChildren="外部" unCheckedChildren="内部"/>
+        </Form.Item>
+        <Form.Item {...tailLayout}>
+          <Button type="primary" htmlType="submit">
+            Submit
+          </Button>
+      </Form.Item>
+    </Form>
+      </Card>
     </Drawer>
     </>
       
