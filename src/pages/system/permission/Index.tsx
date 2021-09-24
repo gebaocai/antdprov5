@@ -9,13 +9,19 @@ import { ColumnsType } from 'antd/es/table';
 import { DownOutlined } from '@ant-design/icons';
 import { Form, Input, Checkbox, Drawer, Radio, Switch} from 'antd';
 import { DrawerProps } from 'antd/es/drawer';
+import { FormInstance } from 'antd/es/form';
 
 const TableList: React.FC = () => {
 
   const {loading, data} = useRequest(permissionTree);
   const [visible, setVisible] = useState(false);
   const [value, setValue] = React.useState(1);
-  const showDrawer = () => {
+  // const [record, setRecored] = useState(null);
+  const formRef = React.createRef<FormInstance>();
+
+  const showDrawer = (record) => {
+    console.log('selected record is:'+record)
+    formRef?.current?.setFieldsValue(record)
     setVisible(true);
   };
   const onClose = () => {
@@ -85,9 +91,9 @@ const TableList: React.FC = () => {
       title: '操作',
       dataIndex: 'action',
       fixed: true,
-      render: () => (
+      render: (_, record: { key: React.Key }) => (
         <Space size="middle">
-          <Button onClick={showDrawer}>编辑</Button>
+          <Button onClick={()=>showDrawer(record)}>编辑</Button>
           <Divider type="vertical" />
           <Dropdown overlay={menu}>
             <a className="ant-dropdown-link" onClick={e => e.preventDefault()}>
@@ -139,10 +145,10 @@ const TableList: React.FC = () => {
         visible={visible}>
           <Card>
             
-       <Form {...layout}>
+       <Form {...layout} ref={formRef}>
         <Form.Item
           label="菜单类型"
-          name="MenuType"
+          name="menuType"
         >
           <Radio.Group onChange={onChange} value={value}>
             <Radio value={1}>一级菜单</Radio>
