@@ -8,6 +8,7 @@ import RightContent from '@/components/RightContent';
 import Footer from '@/components/Footer';
 import { currentUser as queryCurrentUser } from './services/ant-design-pro/api';
 import { BookOutlined, LinkOutlined } from '@ant-design/icons';
+import { message } from 'antd';
 // import TYPE from './pages/data';
 
 const isDev = process.env.NODE_ENV === 'development';
@@ -100,6 +101,7 @@ const tokenCheckInterceptor = async (response: Response, options: RequestOptions
   if (res.code > 5000) {
     // setInitialState({ ...initialState, currentUser: undefined });
     const { location } = history;
+    message.info(res.message);
     if (location.pathname !== loginPath) {
       history.push(loginPath);
     }
