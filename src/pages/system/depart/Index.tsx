@@ -113,6 +113,7 @@ const TableList: React.FC = () => {
     setSelectedKeys([]);
     setSelectedTitle("");
     detailDepart.data = null;
+    listDepart.refresh();
   };
 
   const { TextArea } = Input;

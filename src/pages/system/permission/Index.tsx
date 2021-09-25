@@ -10,17 +10,20 @@ import { DownOutlined } from '@ant-design/icons';
 import { Form, Input, Checkbox, Drawer, Radio, Switch} from 'antd';
 import { DrawerProps } from 'antd/es/drawer';
 import { FormInstance } from 'antd/es/form';
+import styles from './style.less';
+import { request } from '@/app';
 
 const TableList: React.FC = () => {
 
   const {loading, data} = useRequest(permissionTree);
   const [visible, setVisible] = useState(false);
   const [value, setValue] = React.useState(1);
-  // const [record, setRecored] = useState(null);
+  const [record, setRecored] = useState();
   const formRef = React.createRef<FormInstance>();
 
-  const showDrawer = (record) => {
+  const showDrawer = (record:React.ReactNode) => {
     console.log('selected record is:'+record)
+    setRecored(record)
     formRef?.current?.setFieldsValue(record)
     setVisible(true);
   };
@@ -33,11 +36,11 @@ const TableList: React.FC = () => {
   };
 
   const layout = {
-    labelCol: { span: 8 },
+    labelCol: { span: 5 },
     wrapperCol: { span: 16 },
   };
   const tailLayout = {
-    wrapperCol: { offset: 8, span: 16 },
+    wrapperCol: { offset: 8, span: 8 },
   };
 
   const columns: ColumnsType<TableListItem> = [
@@ -127,6 +130,10 @@ const TableList: React.FC = () => {
     </Menu>
   );
 
+  const onFinish = (values: any) => {
+    console.log("onFinsh");
+    request('/api/permission/edit', {});
+  };
 
   return (
     <>
@@ -138,14 +145,17 @@ const TableList: React.FC = () => {
         pagination={false} />
      </Card>
      <Drawer 
-        title="Basic Drawer" 
+        title="编辑" 
         placement="right"
         width='736px'
         onClose={onClose} 
         visible={visible}>
           <Card>
             
-       <Form {...layout} ref={formRef}>
+       <Form {...layout} 
+        ref={formRef} 
+        initialValues={record}
+        onFinish={onFinish}>
         <Form.Item
           label="菜单类型"
           name="menuType"
@@ -224,7 +234,7 @@ const TableList: React.FC = () => {
         </Form.Item>
         <Form.Item {...tailLayout}>
           <Button type="primary" htmlType="submit">
-            Submit
+            提交
           </Button>
       </Form.Item>
     </Form>
