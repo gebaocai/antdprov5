@@ -8,7 +8,7 @@ import {
   WeiboCircleOutlined,
   SmileOutlined,
 } from '@ant-design/icons';
-import { Alert, Space, message, Tabs } from 'antd';
+import { Alert, Space, message as alertMessage, Tabs } from 'antd';
 import React, { useState, useRef } from 'react';
 import ProForm, { ProFormCaptcha, ProFormCheckbox, ProFormText } from '@ant-design/pro-form';
 import { useIntl, Link, history, FormattedMessage, SelectLang, useModel } from 'umi';
@@ -75,7 +75,7 @@ const Login: React.FC = () => {
           defaultMessage: '登录成功！',
         });
         localStorage.setItem('token', msg.data?.token);
-        message.success(defaultloginSuccessMessage);
+        alertMessage.success(defaultloginSuccessMessage);
         await fetchUserInfo();
         goto();
         return;
@@ -88,11 +88,11 @@ const Login: React.FC = () => {
         defaultMessage: '登录失败，请重试！',
       });
 
-      message.error(defaultloginFailureMessage);
+      alertMessage.error(defaultloginFailureMessage);
     }
     setSubmitting(false);
   };
-  const { status, type: loginType } = userLoginState;
+  const { code, message } = userLoginState;
 
   const formRef = useRef<ProFormInstance>();
   // setRandomImageUrl(captchaImage + currdatetime);
@@ -173,13 +173,9 @@ const Login: React.FC = () => {
                 })}
               />
             </Tabs>
-
-            {status === 'error' && loginType === 'account' && (
+            {code != null && code !== 200 && type === 'account' && (
               <LoginMessage
-                content={intl.formatMessage({
-                  id: 'pages.login.accountLogin.errorMessage',
-                  defaultMessage: '账户或密码错误（admin/ant.design)',
-                })}
+                content={message}
               />
             )}
             {type === 'account' && (
@@ -192,7 +188,7 @@ const Login: React.FC = () => {
                   }}
                   placeholder={intl.formatMessage({
                     id: 'pages.login.username.placeholder',
-                    defaultMessage: '用户名: admin or user',
+                    defaultMessage: '请输入用户名',
                   })}
                   rules={[
                     {
@@ -214,7 +210,7 @@ const Login: React.FC = () => {
                   }}
                   placeholder={intl.formatMessage({
                     id: 'pages.login.password.placeholder',
-                    defaultMessage: '密码: ant.design',
+                    defaultMessage: '请输入密码',
                   })}
                   rules={[
                     {
@@ -230,7 +226,7 @@ const Login: React.FC = () => {
                 />
                 <ProForm.Group size="large">
                   <Row gutter={16}>
-                    <Col span={16}>
+                    <Col span={18}>
                       <ProFormText width="md" name="captcha" 
                         fieldProps={{
                           size: 'large',
@@ -239,7 +235,7 @@ const Login: React.FC = () => {
                         placeholder="请输入验证码" />
                       <ProFormText name="checkKey" hidden />
                     </Col>
-                    <Col span={8}>
+                    <Col span={6}>
                       <Image onClick={changeRandomImage}
                           placeholder={true}
                           preview={false}
@@ -254,7 +250,7 @@ const Login: React.FC = () => {
               
             )}
 
-            {status === 'error' && loginType === 'mobile' && <LoginMessage content="验证码错误" />}
+            {code === 200 && type === 'mobile' && <LoginMessage content="验证码错误" />}
             {type === 'mobile' && (
               <>
                 <ProFormText
