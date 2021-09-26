@@ -1,7 +1,7 @@
 // @ts-ignore
 /* eslint-disable */
 import { request } from 'umi';
-import { TableListItem, DepartData } from './data';
+import { TableListItem, Permission } from './data';
 
 export async function depart(
   params: {
@@ -29,8 +29,8 @@ export async function permissionTree(options?: { [key: string]: any }) {
   });
 }
 
-export async function editDepart(body: DepartData, options?: { [key: string]: any }) {
-  return request<Record<string, any>>('/api/sys/sysDepart/edit', {
+export async function editPermission(body: Permission, options?: { [key: string]: any }) {
+  return request<Record<string, any>>('/api/sys/permission/edit', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',

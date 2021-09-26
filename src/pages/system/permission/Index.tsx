@@ -1,7 +1,7 @@
 import { useRequest } from 'umi';
 import React, { useState } from 'react';
 import { Space, Row, Col, Tree, Tabs, Button, Card, Spin, message } from 'antd';
-import { permissionTree} from './service';
+import { permissionTree, editPermission} from './service';
 import {TableListItem} from './data';
 
 import { Table, Divider, Menu, Dropdown } from 'antd';
@@ -11,11 +11,11 @@ import { Form, Input, Checkbox, Drawer, Radio, Switch} from 'antd';
 import { DrawerProps } from 'antd/es/drawer';
 import { FormInstance } from 'antd/es/form';
 import styles from './style.less';
-import { request } from '@/app';
+import { request } from 'umi';
 
 const TableList: React.FC = () => {
 
-  const {loading, data} = useRequest(permissionTree);
+  const {loading, data, refresh} = useRequest(permissionTree);
   const [visible, setVisible] = useState(false);
   const [value, setValue] = React.useState(1);
   const [record, setRecored] = useState();
@@ -132,7 +132,14 @@ const TableList: React.FC = () => {
 
   const onFinish = (values: any) => {
     console.log("onFinsh");
-    request('/api/permission/edit', {});
+    editPermission(values).then(function(response) {
+      console.log(response);
+      setVisible(false);
+      refresh();
+    })
+    .catch(function(error) {
+      console.log(error);
+    });
   };
 
   return (
@@ -156,6 +163,10 @@ const TableList: React.FC = () => {
         ref={formRef} 
         initialValues={record}
         onFinish={onFinish}>
+        <Form.Item
+          name="id"
+          hidden
+        />  
         <Form.Item
           label="菜单类型"
           name="menuType"
