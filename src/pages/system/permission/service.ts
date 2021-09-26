@@ -39,3 +39,14 @@ export async function editPermission(body: Permission, options?: { [key: string]
     ...(options || {}),
   });
 }
+
+export async function addPermission(body: Permission, options?: { [key: string]: any }) {
+  return request<Record<string, any>>('/api/sys/permission/add', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    data: body,
+    ...(options || {}),
+  });
+}

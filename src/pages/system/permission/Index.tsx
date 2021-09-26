@@ -1,12 +1,12 @@
 import { useRequest } from 'umi';
 import React, { useState } from 'react';
 import { Space, Row, Col, Tree, Tabs, Button, Card, Spin, message } from 'antd';
-import { permissionTree, editPermission} from './service';
+import { permissionTree, editPermission, addPermission} from './service';
 import {TableListItem} from './data';
 
 import { Table, Divider, Menu, Dropdown } from 'antd';
 import { ColumnsType } from 'antd/es/table';
-import { DownOutlined } from '@ant-design/icons';
+import { DownOutlined, PlusOutlined } from '@ant-design/icons';
 import { Form, Input, Checkbox, Drawer, Radio, Switch} from 'antd';
 import { DrawerProps } from 'antd/es/drawer';
 import { FormInstance } from 'antd/es/form';
@@ -17,6 +17,7 @@ const TableList: React.FC = () => {
 
   const {loading, data, refresh} = useRequest(permissionTree);
   const [visible, setVisible] = useState(false);
+  const [drawTitle, setDrawTitle] = useState("");
   const [value, setValue] = React.useState(1);
   const [record, setRecored] = useState();
   const formRef = React.createRef<FormInstance>();
@@ -25,10 +26,16 @@ const TableList: React.FC = () => {
     console.log('selected record is:'+record)
     setRecored(record)
     formRef?.current?.setFieldsValue(record)
+    setDrawTitle("编辑")
     setVisible(true);
   };
   const onClose = () => {
     setVisible(false);
+  };
+  const handleAdd = () => {
+    setRecored(undefined)
+    setVisible(true);
+    setDrawTitle("新增")
   };
   const onChange = e => {
     console.log('radio checked', e.target.value);
@@ -132,27 +139,38 @@ const TableList: React.FC = () => {
 
   const onFinish = (values: any) => {
     console.log("onFinsh");
-    editPermission(values).then(function(response) {
-      console.log(response);
-      setVisible(false);
-      refresh();
-    })
-    .catch(function(error) {
-      console.log(error);
-    });
+    if (drawTitle === "编辑") {
+      editPermission(values).then(function(response) {
+        console.log(response);
+        setVisible(false);
+        refresh();
+      })
+      .catch(function(error) {
+        console.log(error);
+      });
+    }else {
+      addPermission(values).then(function(response) {
+        console.log(response);
+        setVisible(false);
+        refresh();
+      })
+      .catch(function(error) {
+        console.log(error);
+      });
+    }
   };
 
   return (
     <>
      <Card>
-       <Button>点我！</Button>
+       <Button onClick={handleAdd} type="primary" shape="round" icon={<PlusOutlined />} style={{marginBottom: 20}}>新增</Button> 
        <Table<TableListItem> 
         columns={columns}
         dataSource={data} 
         pagination={false} />
      </Card>
      <Drawer 
-        title="编辑" 
+        title={drawTitle} 
         placement="right"
         width='736px'
         onClose={onClose} 
