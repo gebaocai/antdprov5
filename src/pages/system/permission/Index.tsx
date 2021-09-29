@@ -4,7 +4,7 @@ import { Space, Row, Col, Tree, Tabs, Button, Card, Spin, message } from 'antd';
 import { permissionTree, editPermission, addPermission} from './service';
 import {TableListItem} from './data';
 
-import { Table, Divider, Menu, Dropdown } from 'antd';
+import { Table, Divider, Menu, Dropdown, TreeSelect } from 'antd';
 import { ColumnsType } from 'antd/es/table';
 import { DownOutlined, PlusOutlined } from '@ant-design/icons';
 import { Form, Input, Checkbox, Drawer, Radio, Switch} from 'antd';
@@ -12,6 +12,7 @@ import { DrawerProps } from 'antd/es/drawer';
 import { FormInstance } from 'antd/es/form';
 import styles from './style.less';
 import { request } from 'umi';
+import PermissionDrawer  from './components/PermissionDrawer';
 
 const TableList: React.FC = () => {
 
@@ -20,6 +21,11 @@ const TableList: React.FC = () => {
   const [drawTitle, setDrawTitle] = useState("");
   const [value, setValue] = React.useState(1);
   const [record, setRecored] = useState();
+
+  const [saving, setSaving] = useState(false);
+
+
+
   const formRef = React.createRef<FormInstance>();
 
   const showDrawer = (record:React.ReactNode) => {
@@ -30,6 +36,7 @@ const TableList: React.FC = () => {
     setVisible(true);
   };
   const onClose = () => {
+    console.log("set visible false")
     setVisible(false);
   };
   const handleAdd = () => {
@@ -42,12 +49,37 @@ const TableList: React.FC = () => {
     setValue(e.target.value);
   };
 
-  const layout = {
-    labelCol: { span: 5 },
-    wrapperCol: { span: 16 },
+  const onTreeChange = () => {
+    setValue(value);
   };
-  const tailLayout = {
-    wrapperCol: { offset: 8, span: 8 },
+
+  const onFinish = (values: any) => {
+    setSaving(true);
+    if (drawTitle === "编辑") {
+      editPermission(values).then(function(response) {
+        console.log(response);
+        setVisible(false);
+        refresh();
+      })
+      .catch(function(error) {
+        console.log(error);
+      })
+      .finally(()=>
+        setSaving(false)
+      );
+    }else {
+      addPermission(values).then(function(response) {
+        console.log(response);
+        setVisible(false);
+        refresh();
+      })
+      .catch(function(error) {
+        console.log(error);
+      })
+      .finally(()=>
+        setSaving(false)
+      );
+    }
   };
 
   const columns: ColumnsType<TableListItem> = [
@@ -137,29 +169,6 @@ const TableList: React.FC = () => {
     </Menu>
   );
 
-  const onFinish = (values: any) => {
-    console.log("onFinsh");
-    if (drawTitle === "编辑") {
-      editPermission(values).then(function(response) {
-        console.log(response);
-        setVisible(false);
-        refresh();
-      })
-      .catch(function(error) {
-        console.log(error);
-      });
-    }else {
-      addPermission(values).then(function(response) {
-        console.log(response);
-        setVisible(false);
-        refresh();
-      })
-      .catch(function(error) {
-        console.log(error);
-      });
-    }
-  };
-
   return (
     <>
      <Card>
@@ -169,106 +178,14 @@ const TableList: React.FC = () => {
         dataSource={data} 
         pagination={false} />
      </Card>
-     <Drawer 
-        title={drawTitle} 
-        placement="right"
-        width='736px'
-        onClose={onClose} 
-        visible={visible}>
-          <Card>
-            
-       <Form {...layout} 
-        ref={formRef} 
-        initialValues={record}
-        onFinish={onFinish}>
-        <Form.Item
-          name="id"
-          hidden
-        />  
-        <Form.Item
-          label="菜单类型"
-          name="menuType"
-        >
-          <Radio.Group onChange={onChange} value={value}>
-            <Radio value={1}>一级菜单</Radio>
-            <Radio value={2}>子菜单</Radio>
-            <Radio value={3}>按钮/权限</Radio>
-          </Radio.Group>
-        </Form.Item>
-        <Form.Item
-          label="菜单名称"
-          name="name"
-          rules={[{ required: true, message: '请输入菜单名称!' }]}
-        >
-          <Input/>
-        </Form.Item>
-        <Form.Item
-          label="菜单路径"
-          name="url"
-          rules={[{ required: true, message: '请输入菜单路径!' }]}
-        >
-          <Input/>
-        </Form.Item>
-        <Form.Item
-          label="前端组件"
-          name="componentName"
-          rules={[{ required: true, message: '请输入前端组件!' }]}
-        >
-          <Input/>
-        </Form.Item>
-        <Form.Item
-          label="默认跳转地址"
-          name="redirect"
-          tooltip="请转入路由器参数redirect"
-        >
-          <Input/>
-        </Form.Item>
-        <Form.Item
-          label="菜单图标"
-          name="icon"
-        >
-          <Input/>
-        </Form.Item>
-        <Form.Item
-          label="排序"
-          name="sortNo"
-        >
-          <Input/>
-        </Form.Item>
-        <Form.Item
-          label="是否路由菜单"
-          name="redirectMenu"
-        >
-          <Switch checkedChildren="是" unCheckedChildren="否" defaultChecked />
-        </Form.Item>
-        <Form.Item
-          label="隐藏路由"
-        >
-          <Switch checkedChildren="是" unCheckedChildren="否" />
-        </Form.Item>
-        <Form.Item
-          label="是否缓存路由"
-        >
-          <Switch checkedChildren="是" unCheckedChildren="否" defaultChecked />
-        </Form.Item>
-        <Form.Item
-          label="聚合路由"
-        >
-          <Switch checkedChildren="是" unCheckedChildren="否" defaultChecked />
-        </Form.Item>
-        <Form.Item
-          label="打开方式"
-        >
-          <Switch checkedChildren="外部" unCheckedChildren="内部"/>
-        </Form.Item>
-        <Form.Item {...tailLayout}>
-          <Button type="primary" htmlType="submit">
-            提交
-          </Button>
-      </Form.Item>
-    </Form>
-      </Card>
-    </Drawer>
+     <PermissionDrawer visible={visible} loading={saving} 
+      onFinish={onFinish}
+      onClose={onClose}
+      title={drawTitle}
+      record={record}
+      treeData={data}
+
+       />
     </>
       
   );
