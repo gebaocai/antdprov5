@@ -1,7 +1,7 @@
 import { useRequest } from 'umi';
 import React, { useState } from 'react';
-import { Space, Row, Col, Tree, Tabs, Button, Card, Spin, message } from 'antd';
-import { permissionTree, editPermission, addPermission} from './service';
+import { Space, Row, Col, Tree, Tabs, Button, Card, Popconfirm, Spin, message } from 'antd';
+import { permissionTree, editPermission, addPermission, deletePermission} from './service';
 import {TableListItem} from './data';
 
 import { Table, Divider, Menu, Dropdown, TreeSelect } from 'antd';
@@ -18,23 +18,45 @@ const TableList: React.FC = () => {
 
   const {loading, data, refresh} = useRequest(permissionTree);
   const [visible, setVisible] = useState(false);
+  const [readOnly, setReadOnly] = useState(false);
   const [drawTitle, setDrawTitle] = useState("");
-  const [value, setValue] = React.useState(1);
   const [record, setRecored] = useState();
 
   const [saving, setSaving] = useState(false);
 
-
-
-  const formRef = React.createRef<FormInstance>();
-
-  const showDrawer = (record:React.ReactNode) => {
+  const showDrawer = (record:any, type:number) => {
     console.log('selected record is:'+record)
     setRecored(record)
-    formRef?.current?.setFieldsValue(record)
-    setDrawTitle("编辑")
+    if (type == 1) {
+      setDrawTitle("编辑")
+      setReadOnly(false);
+    } else if (type == 2) {
+      setDrawTitle("详情")
+      setReadOnly(true);
+    } else {
+      setDrawTitle("添加下级")
+      const xx:any = {menuType:1, parentId:record.id};
+      console.log(xx);
+      setRecored(xx);
+      setReadOnly(false);
+    }
     setVisible(true);
   };
+
+  const deleteRecord = (record:any) => {
+    deletePermission(record).then(function(response) {
+      console.log(response);
+      setVisible(false);
+      refresh();
+    })
+    .catch(function(error) {
+      console.log(error);
+    })
+    .finally(()=>
+      setSaving(false)
+    );
+  };
+
   const onClose = () => {
     console.log("set visible false")
     setVisible(false);
@@ -43,14 +65,6 @@ const TableList: React.FC = () => {
     setRecored(undefined)
     setVisible(true);
     setDrawTitle("新增")
-  };
-  const onChange = e => {
-    console.log('radio checked', e.target.value);
-    setValue(e.target.value);
-  };
-
-  const onTreeChange = () => {
-    setValue(value);
   };
 
   const onFinish = (values: any) => {
@@ -135,9 +149,9 @@ const TableList: React.FC = () => {
       fixed: true,
       render: (_, record: { key: React.Key }) => (
         <Space size="middle">
-          <Button onClick={()=>showDrawer(record)}>编辑</Button>
+          <Button onClick={()=>showDrawer(record, 1)}>编辑</Button>
           <Divider type="vertical" />
-          <Dropdown overlay={menu}>
+          <Dropdown overlay={showMenu(record)}>
             <a className="ant-dropdown-link" onClick={e => e.preventDefault()}>
             更多 <DownOutlined />
             </a>
@@ -149,25 +163,31 @@ const TableList: React.FC = () => {
     }
   ];
   
-  const menu = (
-    <Menu>
-      <Menu.Item key="0">
-        {/* <a target="_blank" rel="noopener noreferrer" href="https://www.antgroup.com"> */}
-          
-          <Button onClick={showDrawer}>详情</Button>
-        {/* </a> */}
-      </Menu.Item>
-      <Menu.Item key="1">
-        {/* <a target="_blank" rel="noopener noreferrer" href="https://www.aliyun.com"> */}
-          添加下级
-        {/* </a> */}
-      </Menu.Item>
-      <Menu.Divider />
-      <Menu.Item key="3" disabled>
-        删除
-      </Menu.Item>
-    </Menu>
-  );
+  const showMenu = (record:React.ReactNode) => {
+    const menu = (
+      <Menu>
+        <Menu.Item key="0">
+          <a href="javascript:;" onClick={()=>showDrawer(record, 2)}>详情</a>
+        </Menu.Item>
+        <Menu.Item key="1">
+          <a href="javascript:;" onClick={()=>showDrawer(record, 3)}>添加下级</a>
+        </Menu.Item>
+        <Menu.Divider />
+        <Menu.Item key="3" >
+          <Popconfirm
+            title="确定删除吗?"
+            onConfirm={()=>deleteRecord(record)}
+            okText="确定"
+            cancelText="取消"
+          >
+            <a href="#">删除</a>
+          </Popconfirm>
+        </Menu.Item>
+      </Menu>
+    );
+    return menu;
+  }
+  
 
   return (
     <>
@@ -178,7 +198,7 @@ const TableList: React.FC = () => {
         dataSource={data} 
         pagination={false} />
      </Card>
-     <PermissionDrawer visible={visible} loading={saving} 
+     <PermissionDrawer visible={visible} loading={saving} readonly={readOnly}
       onFinish={onFinish}
       onClose={onClose}
       title={drawTitle}

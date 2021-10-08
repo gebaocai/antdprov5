@@ -9,6 +9,7 @@ import { DataNode } from 'rc-tree-select/lib/interface';
 type PermissionDrawerProps = {
   loading: boolean;
   visible: boolean;
+  readonly: boolean;
   onClose: (e:any) => void;
 //   onCancel: () => void;
   onFinish: (values:any) => void;
@@ -28,7 +29,7 @@ const tailLayout = {
 
 
 const PermissionDrawer: React.FC<PermissionDrawerProps> = (props) => {
-  const { loading, visible, title, onClose, onFinish, record, treeData} = props;
+  const { loading, visible, readonly, title, onClose, onFinish, record, treeData} = props;
   const formRef = React.createRef<FormInstance>();
   const [validateStatus, setValidateStatus] = useState<ValidateStatus>('success');
 //   formRef?.current?.setFieldsValue(record)
@@ -61,7 +62,7 @@ const PermissionDrawer: React.FC<PermissionDrawerProps> = (props) => {
             label="菜单类型"
             name="menuType"
             >
-            <Radio.Group>
+            <Radio.Group disabled={readonly}>
                 <Radio value={0}>一级菜单</Radio>
                 <Radio value={1}>子菜单</Radio>
                 <Radio value={2}>按钮/权限</Radio>
@@ -79,7 +80,7 @@ const PermissionDrawer: React.FC<PermissionDrawerProps> = (props) => {
                 hidden={record==undefined||record.menuType===0}
                 label="上级菜单"
                 name="parentId"
-                help={'请选择上级菜单!'}
+                // help={'请选择上级菜单!'}
                 required={record?.menuType!==0}
             >
             <TreeSelect
@@ -92,70 +93,70 @@ const PermissionDrawer: React.FC<PermissionDrawerProps> = (props) => {
                 // onChange={onTreeChange}
                 treeData={treeData}
                 defaultValue={record?.parentId}
+                disabled={readonly}
             />
             </Form.Item>
-            {record?.parentId}yyyy
             <Form.Item
             label="菜单路径"
             name="url"
             rules={[{ required: true, message: '请输入菜单路径!' }]}
             >
-            <Input/>
+            <Input disabled={readonly}/>
             </Form.Item>
             <Form.Item
             label="前端组件"
             name="componentName"
             rules={[{ required: true, message: '请输入前端组件!' }]}
             >
-            <Input/>
+            <Input disabled={readonly}/>
             </Form.Item>
             <Form.Item
             label="默认跳转地址"
             name="redirect"
             tooltip="请转入路由器参数redirect"
             >
-            <Input/>
+            <Input disabled={readonly}/>
             </Form.Item>
             <Form.Item
             label="菜单图标"
             name="icon"
             >
-            <Input/>
+            <Input disabled={readonly}/>
             </Form.Item>
             <Form.Item
             label="排序"
             name="sortNo"
             >
-            <Input/>
+            <Input disabled={readonly}/>
             </Form.Item>
             <Form.Item
             label="是否路由菜单"
             name="redirectMenu"
             >
-            <Switch checkedChildren="是" unCheckedChildren="否" defaultChecked />
+            <Switch checkedChildren="是" unCheckedChildren="否" defaultChecked disabled={readonly}/>
             </Form.Item>
             <Form.Item
             label="隐藏路由"
             >
-            <Switch checkedChildren="是" unCheckedChildren="否" />
+            <Switch checkedChildren="是" unCheckedChildren="否" disabled={readonly}/>
             </Form.Item>
             <Form.Item
             label="是否缓存路由"
             >
-            <Switch checkedChildren="是" unCheckedChildren="否" defaultChecked />
+            <Switch checkedChildren="是" unCheckedChildren="否" defaultChecked disabled={readonly}/>
             </Form.Item>
             <Form.Item
             label="聚合路由"
             >
-            <Switch checkedChildren="是" unCheckedChildren="否" defaultChecked />
+            <Switch checkedChildren="是" unCheckedChildren="否" defaultChecked disabled={readonly}/>
             </Form.Item>
             <Form.Item
             label="打开方式"
             >
-            <Switch checkedChildren="外部" unCheckedChildren="内部"/>
+            <Switch checkedChildren="外部" unCheckedChildren="内部" disabled={readonly}/>
             </Form.Item>
             <Form.Item {...tailLayout}>
-            <Button type="primary" htmlType="submit">
+            <Button type="primary" htmlType="submit" disabled={readonly}>
                 提交
             </Button>
         </Form.Item>
