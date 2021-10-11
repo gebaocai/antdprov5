@@ -32,11 +32,25 @@ const PermissionDrawer: React.FC<PermissionDrawerProps> = (props) => {
   const { loading, visible, readonly, title, onClose, onFinish, record, treeData} = props;
   const formRef = React.createRef<FormInstance>();
   const [validateStatus, setValidateStatus] = useState<ValidateStatus>('success');
+  const [show, setShow] = useState(true);
 //   formRef?.current?.setFieldsValue(record)
 
   const onTreeChange = (value: 	string | string[]) => {
     formRef?.current?.setFieldsValue({"parentId": value})
   };
+
+  const menuTypeChange = (e) => {
+    const curMenuType = formRef?.current?.getFieldValue("menuType");
+    if(curMenuType == 2){
+      // this.show = false;
+      // formRef?.current?.setFieldsValue({"title": '按钮/权限'});
+      setShow(false);
+    }else{
+      // this.show = true;
+      // formRef?.current?.setFieldsValue({"title": '菜单名称'});
+      setShow(true);
+    }
+  }
 
   return (
     <Spin spinning={loading}>
@@ -62,7 +76,7 @@ const PermissionDrawer: React.FC<PermissionDrawerProps> = (props) => {
             label="菜单类型"
             name="menuType"
             >
-            <Radio.Group disabled={readonly}>
+            <Radio.Group disabled={readonly} onChange={menuTypeChange}>
                 <Radio value={0}>一级菜单</Radio>
                 <Radio value={1}>子菜单</Radio>
                 <Radio value={2}>按钮/权限</Radio>
@@ -97,6 +111,7 @@ const PermissionDrawer: React.FC<PermissionDrawerProps> = (props) => {
             />
             </Form.Item>
             <Form.Item
+            hidden={!show}
             label="菜单路径"
             name="url"
             rules={[{ required: true, message: '请输入菜单路径!' }]}
@@ -104,6 +119,7 @@ const PermissionDrawer: React.FC<PermissionDrawerProps> = (props) => {
             <Input disabled={readonly}/>
             </Form.Item>
             <Form.Item
+            hidden={!show}
             label="前端组件"
             name="componentName"
             rules={[{ required: true, message: '请输入前端组件!' }]}
