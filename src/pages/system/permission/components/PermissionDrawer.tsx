@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Card, Spin, TreeSelect, Button } from 'antd';
 import { Form, Input, Checkbox, Drawer, Radio, Switch} from 'antd';
 import { FormInstance } from 'antd/es/form';
@@ -33,7 +33,9 @@ const PermissionDrawer: React.FC<PermissionDrawerProps> = (props) => {
   const formRef = React.createRef<FormInstance>();
   const [validateStatus, setValidateStatus] = useState<ValidateStatus>('success');
   const [show, setShow] = useState(true);
+  const [menuType, setMenuType] = useState(record?.menuType);
 //   formRef?.current?.setFieldsValue(record)
+  
 
   const onTreeChange = (value: 	string | string[]) => {
     formRef?.current?.setFieldsValue({"parentId": value})
@@ -45,12 +47,20 @@ const PermissionDrawer: React.FC<PermissionDrawerProps> = (props) => {
       // this.show = false;
       // formRef?.current?.setFieldsValue({"title": '按钮/权限'});
       setShow(false);
-    }else{
+      setMenuType(2);
+    } else if (curMenuType == 1){
       // this.show = true;
       // formRef?.current?.setFieldsValue({"title": '菜单名称'});
       setShow(true);
+      setMenuType(1);
+    } else {
+      setMenuType(0);
     }
+    console.log("curMenuType is "+curMenuType);
+    console.log("menuType is "+menuType);
   }
+
+  
 
   return (
     <Spin spinning={loading}>
@@ -91,11 +101,11 @@ const PermissionDrawer: React.FC<PermissionDrawerProps> = (props) => {
             <Input/>
             </Form.Item>
             <Form.Item
-                hidden={record==undefined||record.menuType===0}
+                hidden={menuType==0}
                 label="上级菜单"
                 name="parentId"
                 // help={'请选择上级菜单!'}
-                required={record?.menuType!==0}
+                required={menuType!==0}
             >
             <TreeSelect
                 showSearch
