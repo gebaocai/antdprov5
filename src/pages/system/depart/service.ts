@@ -55,6 +55,14 @@ export async function permissionList(options?: { [key: string]: any }) {
   });
 }
 
+export async function permissionTree(options?: { [key: string]: any }) {
+  return request<{
+  }>('/api/sys/permission/queryTreeList', {
+    method: 'GET',
+    ...(options || {}),
+  });
+}
+
 export async function departPermission(options?: { [key: string]: any }) {
   return request<Record<string, any>>('/api/departPermission', {
     method: 'GET',

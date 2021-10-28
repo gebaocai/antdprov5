@@ -2,7 +2,7 @@ import { useRequest } from 'umi';
 import React, { useState, useRef, useEffect } from 'react';
 import { Space, Row, Col, Tree, Tabs, Button, Card, Spin, message } from 'antd';
 import { depart, departList} from './service';
-import { permissionList, departPermission, editDepart} from './service';
+import { permissionTree, departPermission, editDepart} from './service';
 import CreateDepartForm  from './components/CreateDepartForm';
 import EditDepartPermissionForm  from './components/EditDepartPermissionForm';
 import styles from './style.less';
@@ -126,7 +126,7 @@ const TableList: React.FC = () => {
       formRef?.current?.setFieldsValue(data);
     }
   });
-  const permissionListReq = useRequest(permissionList, {manual: true});
+  const permissionListReq = useRequest(permissionTree, {manual: true});
   const departPermissionReq = useRequest(departPermission, {manual: true});
 
   return (

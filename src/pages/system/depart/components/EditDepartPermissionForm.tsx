@@ -6,13 +6,14 @@ import { DataItem } from '@antv/g2plot/esm/interface/config';
 export { DataItem };
 import { FormInstance } from 'antd/lib/form';
 import { Typography } from 'antd';
+import { DataNode } from 'rc-tree/lib/interface';
 
 const { Title } = Typography;
 
 type EditFormProps = {
   selectedKeys: React.Key[];
   loading: boolean;
-  permissionList: Permission[];
+  permissionList: Array<DataNode>;
   departPermission: string[]
 };
 
@@ -81,10 +82,11 @@ const EditDepartPermissionForm: React.FC<EditFormProps> = (props) => {
             
             <Title level={5}>所拥有的权限:</Title>
               <Tree 
-                checkedKeys= {departPermission}
-                treeData = {permissionList}
-                checkable
-
+                checkable={true}
+                selectable={true}
+                treeData={permissionList}
+                defaultCheckedKeys={departPermission}
+                
               />
           </Form>
         </Card> :
