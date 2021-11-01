@@ -81,6 +81,11 @@ const TableList: React.FC = () => {
     return true;
   };
 
+  const onPermissionFinish = (values: any) => {
+    console.log('Success:', values);
+    return true;
+  };
+
   const { run } = useRequest(editDepart, {
     manual: true,
     onSuccess : ()=>{message.success('修改成功');onClearSelected();},
@@ -248,7 +253,12 @@ const TableList: React.FC = () => {
                     </Spin>
             </TabPane>
             <TabPane tab="部门权限" key="2">
-              <EditDepartPermissionForm selectedKeys={selectedKeys} loading={permissionListReq.loading} permissionList={permissionListReq.data} departPermission={departPermissionReq.data}></EditDepartPermissionForm>
+              <EditDepartPermissionForm selectedKeys={selectedKeys} 
+                loading={permissionListReq.loading} 
+                permissionList={permissionListReq.data} 
+                departPermission={departPermissionReq.data} 
+                onFinish={onPermissionFinish}/>
+        
             </TabPane>
           </Tabs>
         </Col>
