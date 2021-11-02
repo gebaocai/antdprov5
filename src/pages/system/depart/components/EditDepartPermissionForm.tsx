@@ -11,7 +11,7 @@ import { DataNode } from 'rc-tree/lib/interface';
 const { Title } = Typography;
 
 type EditFormProps = {
-  selectedKeys: React.Key[];
+  selectedKeys: string[];
   loading: boolean;
   permissionList: Array<DataNode>;
   departPermission: string[];
@@ -25,6 +25,16 @@ const EditDepartPermissionForm: React.FC<EditFormProps> = (props) => {
 
   const [expandedKeys, setExpandedKeys] = useState<React.Key[]>([]);
   const [checkedKeys, setCheckedKeys] = useState<React.Key[]>(departPermission);
+  const [curDepartKey, setCurDepartKey] = useState<string>('');
+
+  useEffect(() => {
+    let keyStr = selectedKeys.length>0?selectedKeys[0]:'';
+    if (keyStr != curDepartKey) {
+      setCheckedKeys(departPermission);
+      setCurDepartKey(keyStr);
+    }
+  });
+
   // const [checkKeyStr, setCheckKeyStr] = useState<string>(checkedKeys.join());
   // const [selectedKeys2, setSelectedKeys] = useState<React.Key[]>([]);
   const [autoExpandParent, setAutoExpandParent] = useState<boolean>(true);
@@ -121,7 +131,7 @@ const EditDepartPermissionForm: React.FC<EditFormProps> = (props) => {
                 checkStrictly={false}
                 
               />
-            <Form.Item name="checkKeyStr">
+            <Form.Item name="checkKeyStr" hidden>
               <Input />
             </Form.Item>  
             <Form.Item wrapperCol={{offset: 8, span: 16}}>

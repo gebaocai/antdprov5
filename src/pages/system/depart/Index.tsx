@@ -5,23 +5,10 @@ import { depart, departList} from './service';
 import { permissionTree, departPermission, editDepart} from './service';
 import CreateDepartForm  from './components/CreateDepartForm';
 import EditDepartPermissionForm  from './components/EditDepartPermissionForm';
+import EditDepartForm  from './components/EditDepartForm';
 import styles from './style.less';
-import { Form, Input, Checkbox,Radio, InputNumber, Empty, Alert } from 'antd';
+import {Input, Alert } from 'antd';
 import {DepartData} from './data.d';
-import type { ProFormInstance } from '@ant-design/pro-form';
-import ProForm, {
-  ModalForm,
-  DrawerForm,
-  QueryFilter,
-  LightFilter,
-  StepsForm,
-  ProFormText,
-  ProFormDateRangePicker,
-  ProFormSelect,
-  ProFormRadio,
-  LoginForm,
-} from '@ant-design/pro-form';
-import request from '@/utils/request';
 import { FormInstance } from 'antd/es/form';
 
 
@@ -32,8 +19,6 @@ const TableList: React.FC = () => {
   const [createFormVisable, setCreateFormVisable] = useState(false);
   const [selectedKeys, setSelectedKeys] = useState<React.Key[]>([]);
   const [selectedTitle, setSelectedTitle] = useState<String>();
-
-  const formRef = React.createRef<FormInstance>();
   
   const callback = (key:any) => {
     console.log(key);
@@ -63,6 +48,7 @@ const TableList: React.FC = () => {
   };
 
   const onSelect = (selectedKeysValue: React.Key[], info: any) => {
+    console.log('onSelect keys', selectedKeysValue);
     console.log('onSelect', info);
     setSelectedKeys(selectedKeysValue);
     setSelectedTitle(info.node.title);
@@ -92,45 +78,25 @@ const TableList: React.FC = () => {
     onError : ()=>{message.success('修改失败');},
   });
 
-  const onFinishFailed = (errorInfo: any) => {
-    console.log('Failed:', errorInfo);
-  };
-
-  const labelCol = { // 24格栅格系统，label所占为 a
-    xxl: 5, // ≥1600px 响应式栅格
-    xl: 8, // ≥1200px 响应式栅格
-    lg: 10, // ≥992px 响应式栅格
-    md: 12 // ≥768px 响应式栅格
-  };
-  const wrapperCol = { // 24格栅格系统，label后面内容所占为 24-a
-    xxl: 19,
-    xl: 16,
-    lg: 14,
-    md: 12
-  };
-
   const getCurrSelectedTitle = () => {
     return "当前选择：" + selectedTitle;
   };
 
   const onClearSelected = () => {
-    console.log('onClearSelected:');
     setSelectedKeys([]);
     setSelectedTitle("");
     detailDepart.data = null;
     listDepart.refresh();
   };
 
-  const { TextArea } = Input;
-
   const listDepart = useRequest(departList);
   const detailDepart = useRequest(depart, {
     manual: true,
-    onSuccess: (data) => {
-      console.log(data);
-      formRef?.current?.setFieldsValue(data);
+    // onSuccess: (data) => {
+    //   console.log(data);
+    //   formRef?.current?.setFieldsValue(data);
     }
-  });
+  );
   const permissionListReq = useRequest(permissionTree, {manual: true});
   const departPermissionReq = useRequest(departPermission, {manual: true});
 
@@ -169,88 +135,11 @@ const TableList: React.FC = () => {
         <Col span={12}>
           <Tabs defaultActiveKey="1" onChange={callback}>
             <TabPane tab="基本信息" key="1">
-              {/* <EditDepartForm selectedKeys={selectedKeys} loading={detailDepart.loading} model={detailDepart.data}></EditDepartForm> */}
-              <Spin spinning={detailDepart.loading}>
-                {selectedKeys.length>0?
-                    <Card bordered={false}>
-                      
-                      <Form
-                        name="basic"
-                        ref={formRef}
-                        labelCol={{ span: 4 }}
-                        wrapperCol={{ span: 4 }}
-                        initialValues={detailDepart.data}
-                        onFinish={onFinish}
-                        onFinishFailed={onFinishFailed}
-                      >
-                        <ProFormText name="id" hidden/>
-                        <ProFormText
-                          width="md"
-                          name="departName"
-                          label="机构名称"
-                          tooltip="请输入机构名称!"
-                          placeholder="请输入机构名称"
-                          rules={[{ required: true, message: '请输入机构名称!' }]} />
-                        <Form.Item
-                          label="机构类型"
-                          name="departType"
-                        >
-                        <Radio.Group defaultValue="a">
-                            <Radio value="a">公司</Radio>
-                          </Radio.Group>
-                        </Form.Item>
-
-                        <Form.Item
-                          label="电话"
-                          name="mobile"
-                        >
-                          <Input placeholder="请输入电话"/>
-                        </Form.Item>
-
-                        <Form.Item
-                          label="传真"
-                          name="fax"
-                        >
-                          <Input placeholder="请输入传真"/>
-                        </Form.Item>
-
-                        <Form.Item
-                          label="地址"
-                          name="address"
-                        >
-                          <Input placeholder="请输入地址"/>
-                        </Form.Item>
-
-                        <Form.Item
-                          label="排序"
-                          name="departOrder"
-                        >
-                          <InputNumber defaultValue={0}/>
-                        </Form.Item>
-
-                        <Form.Item
-                          label="备注"
-                          name="memo"
-                        >
-                          <TextArea rows={2} placeholder="请输入备注"/>
-                        </Form.Item>
-
-                        <Form.Item wrapperCol={{offset: 8, span: 16}}>
-                          <Button type="primary" htmlType="submit">
-                            提交
-                          </Button>
-                          <Button htmlType="button" onClick={onClearSelected}>
-                            取消
-                          </Button>
-                        </Form.Item>
-                      </Form>
-                    </Card> :
-                    <Card>
-                      <Empty description="请先选择一个部门!" />
-                    </Card>
-                    
-            }
-                    </Spin>
+              <EditDepartForm 
+                selectedKeys={selectedKeys} 
+                loading={detailDepart.loading} 
+                model={detailDepart.data} 
+                onFinish={onFinish}/>
             </TabPane>
             <TabPane tab="部门权限" key="2">
               <EditDepartPermissionForm selectedKeys={selectedKeys} 

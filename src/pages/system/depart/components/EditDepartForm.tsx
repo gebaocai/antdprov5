@@ -1,36 +1,22 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Space, Row, Col, Tree, Tabs, Button, Card, message } from 'antd';
 import { Spin, Form, Input, Checkbox,Radio, InputNumber, Empty } from 'antd';
 import {DepartData} from '../data.d';
 import { DataItem } from '@antv/g2plot/esm/interface/config';
 export { DataItem };
 import { FormInstance } from 'antd/lib/form';
-import { editDepart } from '../service'
-import { useRequest } from 'umi';
 
 type EditFormProps = {
   selectedKeys: React.Key[];
   loading: boolean;
   model: DepartData;
+  onFinish: (values:any) => void;
 };
 
 const { TextArea } = Input;
 
 const EditDepartForm: React.FC<EditFormProps> = (props) => {
-  const { selectedKeys, loading, model} = props;
-
-  console.log("model is:" + model);
-
-  const onFinish = (values: DepartData) => {
-    console.log('Success:', values);
-    run(values);
-  };
-
-  const { run } = useRequest(editDepart, {
-    manual: true,
-    onSuccess : ()=>{message.success('修改成功');},
-    onError : ()=>{message.success('修改失败');},
-  });
+  const { selectedKeys, loading, model, onFinish} = props;
 
   const onFinishFailed = (errorInfo: any) => {
     console.log('Failed:', errorInfo);
@@ -56,27 +42,30 @@ const EditDepartForm: React.FC<EditFormProps> = (props) => {
   const tailLayout = {
     wrapperCol: { offset: 8, span: 16 },
   };
+
+
+  useEffect(()=>{
+    formRef?.current?.setFieldsValue(model);
+  });
+
   
+  console.log("loading", loading);
   console.log("model", model);
 
   const formRef = React.createRef<FormInstance>();
 
 
   const onReset = () => {
-    formRef.current!.resetFields();
-  };
-
-  const onFill = () => {
-    formRef.current!.setFieldsValue({
-      note: 'Hello world!',
-      gender: 'male',
-    });
+    // formRef?.current?.resetFields();
+    formRef?.current?.setFieldsValue(model);
   };
 
   return (
-    <Spin spinning={loading}>
+    <Spin spinning={loading}>  
     {selectedKeys.length>0&&model?
+        
         <Card bordered={false}>
+          
           <Form
             name="basic"
             ref={formRef}
