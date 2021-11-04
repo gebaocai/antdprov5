@@ -176,6 +176,11 @@ export default defineConfig({
           component: './system/user/',
         },
         {
+          path: '/system/role',
+          name: 'role',
+          component: './system/role/',
+        },
+        {
           path: '/system/depart',
           name: 'depart',
           component: './system/depart/',
