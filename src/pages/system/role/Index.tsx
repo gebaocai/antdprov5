@@ -1,13 +1,20 @@
+import { useRequest } from 'umi';
 import React, { FC, useState } from 'react';
-import { Table, Card, Space, Button, Drawer } from 'antd';
+import { Table, Card, Space, Button, Col, Row} from 'antd';
 import { Divider, Menu, Dropdown, Popconfirm } from 'antd';
-import { DownOutlined, PlusOutlined } from '@ant-design/icons';
+import { DownOutlined, PlusOutlined, CloseCircleOutlined} from '@ant-design/icons';
 
 import RoleModal from './components/RoleModal';
+import RoleUser from './components/RoleUser';
+import RolePermission from './components/RolePermission';
 import { RoleItem } from './data';
+import { permissionTree, rolePermission} from './service';
 
 const RolePage: FC = () => {
   const [roleModalVisiable, setRoleModalVisiable] = useState(false);
+  const [leftCardVisiable, setLeftCardVisiable] = useState(false);
+  const [showRoleUser, setShowRoleUser] = useState(false);
+  const [rightCardSpan, setRightCardSpan] = useState(24);
   const [model, setModel] = useState<RoleItem>();
 
   const dataSource = [
@@ -51,9 +58,9 @@ const RolePage: FC = () => {
       align: 'center',
       render: (text:any, record: { key: React.Key }) => (
         <Space size="middle">
-          <a href="javascript:;" onClick={()=>showDrawer(record, 1)}>用户</a>
+          <a href="javascript:;" onClick={()=>showCard(record, 1)}>用户</a>
           <Divider type="vertical" />
-          <a href="javascript:;" onClick={()=>showDrawer(record, 1)}>授权</a>
+          <a href="javascript:;" onClick={()=>showCard(record, 2)}>授权</a>
           <Divider type="vertical" />
           <Dropdown overlay={showMenu(record)}>
             <a className="ant-dropdown-link" onClick={e => e.preventDefault()}>
@@ -87,8 +94,17 @@ const RolePage: FC = () => {
     return menu;
   }
 
-  const showDrawer = (record:any, type:number) => {
-
+  const showCard = (record:any, type:number) => {
+    setLeftCardVisiable(true);
+    setRightCardSpan(12);
+    if (type == 1) {
+      setShowRoleUser(true);
+    } else {
+      
+      setShowRoleUser(false);
+      permissionListReq.run();
+      rolePermissionReq.run();
+    }
   }
 
   const deleteRecord = (record:any) => {
@@ -104,6 +120,12 @@ const RolePage: FC = () => {
     setRoleModalVisiable(false);
   }
 
+  const onCloseCard = () => {
+    console.log("onCloseCard")
+    setLeftCardVisiable(false);
+    setRightCardSpan(24);
+  }
+
   const showRoleModal = (record:any, type: number) => {
     console.log("typeis " + type)
     console.log("record is " + record)
@@ -111,24 +133,43 @@ const RolePage: FC = () => {
     setModel(record);
   }
 
-  return (<>
-    <Card>
-      <Space align="center">
-      <Button onClick={()=>showRoleModal(null, 1)} type="primary" shape="round" icon={<PlusOutlined />} style={{marginBottom: 20}}>新增</Button> 
-      </Space>
-      <Table 
-        rowSelection={{type:'radio'}}
-        dataSource={dataSource} 
-        columns={columns} />
-    </Card>
+  const permissionListReq = useRequest(permissionTree, {manual: true});
+  const rolePermissionReq = useRequest(rolePermission, {manual: true});
 
-    <RoleModal 
-      modalVisible={roleModalVisiable} 
-      model={model}
-      onFinish={onFinish}
-      onCancel={onCancel} />
-    
+  return (<>
+    <Row gutter={16}>
+      <Col span={rightCardSpan}> 
+        <Card>
+          <Space align="center">
+          <Button onClick={()=>showRoleModal(null, 1)} type="primary" shape="round" icon={<PlusOutlined />} style={{marginBottom: 20}}>新增</Button> 
+          </Space>
+          <Table 
+            rowSelection={{type:'radio'}}
+            dataSource={dataSource} 
+            columns={columns} />
+        </Card>
+
+        <RoleModal 
+          modalVisible={roleModalVisiable} 
+          model={model}
+          onFinish={onFinish}
+          onCancel={onCancel} />
+      </Col>
+      <Col span={12}> 
+        <Card bordered={false} hidden={!leftCardVisiable} extra={<CloseCircleOutlined onClick={onCloseCard}/> }>
+          <RoleUser hidden={!showRoleUser}></RoleUser>
+          <RolePermission 
+            hidden={showRoleUser}
+            loading={permissionListReq.loading} 
+            rolePermission={rolePermissionReq.data}
+            permissionList={permissionListReq.data}
+            onFinish={onFinish}
+            />
+        </Card>
+      </Col>  
+    </Row>
     </>
+
   );
 };
 
