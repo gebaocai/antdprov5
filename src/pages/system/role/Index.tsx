@@ -1,14 +1,15 @@
 import { useRequest } from 'umi';
 import React, { FC, useState } from 'react';
 import { Table, Card, Space, Button, Col, Row} from 'antd';
-import { Divider, Menu, Dropdown, Popconfirm } from 'antd';
+import { Divider, Menu, Dropdown, Popconfirm, Spin, message } from 'antd';
 import { DownOutlined, PlusOutlined, CloseCircleOutlined} from '@ant-design/icons';
 
 import RoleModal from './components/RoleModal';
 import RoleUser from './components/RoleUser';
 import RolePermission from './components/RolePermission';
 import { RoleItem } from './data';
-import { permissionTree, rolePermission} from './service';
+import { permissionTree, rolePermission, roleList, addRole, editRole} from './service';
+import { editDepart } from '../depart/service';
 
 const RolePage: FC = () => {
   const [roleModalVisiable, setRoleModalVisiable] = useState(false);
@@ -16,21 +17,6 @@ const RolePage: FC = () => {
   const [showRoleUser, setShowRoleUser] = useState(false);
   const [rightCardSpan, setRightCardSpan] = useState(24);
   const [model, setModel] = useState<RoleItem>();
-
-  const dataSource = [
-    {
-      key: '1',
-      code: 'hr',
-      name: '人力资源',
-      createDate: '2021-8-1 11:11:11'
-    },
-    {
-      key: '2',
-      code: 'it',
-      name: '开发技术',
-      createDate: '2021-8-1 11:11:11'
-    },
-  ];
   
   const columns = [
     {
@@ -54,7 +40,7 @@ const RolePage: FC = () => {
     {
       title: '操作',
       dataIndex: 'action',
-      fixed: true,
+      fixed: 'left',
       align: 'center',
       render: (text:any, record: { key: React.Key }) => (
         <Space size="middle">
@@ -112,7 +98,8 @@ const RolePage: FC = () => {
   }
 
   const onFinish = (values: any) => {
-
+    console.log("onFinish " + model);
+    model?editRoleReq.run(values):addRoleReq.run(values);
   }
 
   const onCancel = () => {
@@ -133,8 +120,24 @@ const RolePage: FC = () => {
     setModel(record);
   }
 
+  const onChangePage = (pagination, filters, sorter) => {
+    // console.log("page pageSize" + page+" "+ pageSize)
+    roleListReq.run({pageNo:pagination.current, pageSize:pagination.pageSize});
+  }
+
+  // function showTotal(total:number) {
+  //   return `Total ${total} items`;
+  // }
+
   const permissionListReq = useRequest(permissionTree, {manual: true});
   const rolePermissionReq = useRequest(rolePermission, {manual: true});
+  const addRoleReq = useRequest(addRole, {manual: true,
+    onSuccess : ()=>{message.success('新增成功');roleListReq.refresh();onCancel();},
+    onError : ()=>{message.success('新增失败');},});
+  const editRoleReq = useRequest(editRole, {manual: true,
+    onSuccess : ()=>{message.success('编辑成功');roleListReq.refresh();onCancel();},
+    onError : ()=>{message.success('编辑失败');},});
+  const roleListReq = useRequest(roleList);
 
   return (<>
     <Row gutter={16}>
@@ -143,10 +146,20 @@ const RolePage: FC = () => {
           <Space align="center">
           <Button onClick={()=>showRoleModal(null, 1)} type="primary" shape="round" icon={<PlusOutlined />} style={{marginBottom: 20}}>新增</Button> 
           </Space>
+          <Spin spinning={roleListReq.loading}>
           <Table 
             rowSelection={{type:'radio'}}
-            dataSource={dataSource} 
+            dataSource={roleListReq.data?.records}
+            pagination={{current:roleListReq.data?.current, 
+              defaultCurrent:1, 
+              total:roleListReq.data?.total,
+              
+              showTotal:(total, range)=> `${range[0]}-${range[1]} of ${total} items`
+               }}
+            onChange={onChangePage}
             columns={columns} />
+            
+          </Spin>  
         </Card>
 
         <RoleModal 

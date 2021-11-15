@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Modal } from 'antd';
-import { Form, Input, Checkbox,Radio, InputNumber } from 'antd';
+import { Form, Input, Checkbox,Radio, InputNumber, Button } from 'antd';
 import { RoleItem } from '../data.d';
 import _ from '@umijs/deps/compiled/lodash';
 
@@ -45,6 +45,7 @@ const RoleModal: React.FC<CreateFormProps> = (props) => {
       visible={modalVisible}
       onCancel={onCancel}
       width={800}
+      footer={null}
     >
       <Form
         name="basic"
@@ -80,6 +81,11 @@ const RoleModal: React.FC<CreateFormProps> = (props) => {
           name="desc"
         >
           <TextArea rows={2} placeholder="请输入角色描述"/>
+        </Form.Item>
+        <Form.Item wrapperCol={{offset: 20, span: 4}} >
+          <Button type="primary" htmlType="submit">
+            提交
+          </Button>
         </Form.Item>
       </Form>
     </Modal>
