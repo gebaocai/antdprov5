@@ -64,7 +64,7 @@ const RoleUser: FC<RoleUserProps> = (props) => {
       align: 'center',
       render: (text:any, record: { key: React.Key }) => (
         <Space size="middle">
-          <a href="javascript:;" onClick={()=>showDrawer(record, 1)}>编辑</a>
+          <a href="#" onClick={()=>showDrawer(record, 1)}>编辑</a>
           <Divider type="vertical" />
           <Dropdown overlay={showMenu(record)}>
             <a className="ant-dropdown-link" onClick={e => e.preventDefault()}>
@@ -86,7 +86,7 @@ const RoleUser: FC<RoleUserProps> = (props) => {
             okText="确定"
             cancelText="取消"
           >
-            <a href="javascript:;">删除</a>
+            <a href="#">删除</a>
           </Popconfirm>
         </Menu.Item>
       </Menu>

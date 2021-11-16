@@ -2,6 +2,7 @@ import React, { FC, useState } from 'react';
 import { Form, Typography, Tree, Button, Spin, Input} from 'antd';
 import { FormInstance } from 'antd/lib/form';
 import { DataNode } from 'rc-tree/lib/interface';
+import {RoleItem} from '../data.d';
 
 const { Title } = Typography;
 
@@ -11,10 +12,11 @@ type RolePermissionProps = {
   permissionList: Array<DataNode>;
   rolePermission: string[];
   onFinish: (values:any) => void;
+  role: RoleItem|undefined;
 };
 
 const RolePermission: FC<RolePermissionProps> = (props) => {
-  const {hidden, loading, permissionList, rolePermission, onFinish} = props;
+  const {hidden, loading, permissionList, rolePermission, onFinish, role} = props;
   const [checkedKeys, setCheckedKeys] = useState<React.Key[]>(rolePermission);
   const [expandedKeys, setExpandedKeys] = useState<React.Key[]>([]);
   const [autoExpandParent, setAutoExpandParent] = useState<boolean>(true);
@@ -34,7 +36,7 @@ const RolePermission: FC<RolePermissionProps> = (props) => {
     md: 12
   };
 
-  
+  console.log(role);
   const onExpand = (expandedKeysValue: React.Key[]) => {
     console.log('onExpand', expandedKeysValue);
     // if not set autoExpandParent to false, if children expanded, parent can not collapse.
@@ -49,11 +51,14 @@ const RolePermission: FC<RolePermissionProps> = (props) => {
     // setCheckKeyStr(checkedKeysValue.join());
     console.log('checkKeyStr', checkedKeysValue.join());
     formRef.current!.setFieldsValue({
-      checkKeyStr: checkedKeysValue.join()
+      permissionIds: checkedKeysValue.join()
     });
   };
 
   const formRef = React.createRef<FormInstance>();
+  formRef.current?.setFieldsValue({
+    roleId : role?.id
+  });
 
   return (<div hidden={hidden}>
           <Spin spinning={loading}>
@@ -62,7 +67,7 @@ const RolePermission: FC<RolePermissionProps> = (props) => {
               ref={formRef}
               labelCol={labelCol}
               wrapperCol={wrapperCol}
-              initialValues={{ checkKeyStr: checkKeyStr }}
+              initialValues={{ permissionIds: checkKeyStr , roleId: role?.id}}
               onFinish={onFinish}
             >
               
@@ -81,7 +86,10 @@ const RolePermission: FC<RolePermissionProps> = (props) => {
                   checkStrictly={false}
                   
                 />
-              <Form.Item name="checkKeyStr" hidden>
+              <Form.Item name="roleId">
+                <Input />
+              </Form.Item>    
+              <Form.Item name="permissionIds" >
                 <Input />
               </Form.Item>  
               <Form.Item wrapperCol={{offset: 8, span: 16}}>

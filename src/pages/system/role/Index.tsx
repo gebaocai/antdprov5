@@ -8,7 +8,7 @@ import RoleModal from './components/RoleModal';
 import RoleUser from './components/RoleUser';
 import RolePermission from './components/RolePermission';
 import { RoleItem } from './data';
-import { permissionTree, rolePermission, roleList, addRole, editRole} from './service';
+import { permissionTree, rolePermission, roleList, addRole, editRole, editRolePermission} from './service';
 import { editDepart } from '../depart/service';
 
 const RolePage: FC = () => {
@@ -44,9 +44,9 @@ const RolePage: FC = () => {
       align: 'center',
       render: (text:any, record: { key: React.Key }) => (
         <Space size="middle">
-          <a href="javascript:;" onClick={()=>showCard(record, 1)}>用户</a>
+          <a href="#" onClick={()=>showCard(record, 1)}>用户</a>
           <Divider type="vertical" />
-          <a href="javascript:;" onClick={()=>showCard(record, 2)}>授权</a>
+          <a href="#" onClick={()=>showCard(record, 2)}>授权</a>
           <Divider type="vertical" />
           <Dropdown overlay={showMenu(record)}>
             <a className="ant-dropdown-link" onClick={e => e.preventDefault()}>
@@ -62,7 +62,7 @@ const RolePage: FC = () => {
     const menu = (
       <Menu>
         <Menu.Item key="0">
-          <a href="javascript:;" onClick={()=>showRoleModal(record, 2)}>编辑</a>
+          <a href="#" onClick={()=>showRoleModal(record, 2)}>编辑</a>
         </Menu.Item>
         <Menu.Divider />
         <Menu.Item key="3" >
@@ -72,7 +72,7 @@ const RolePage: FC = () => {
             okText="确定"
             cancelText="取消"
           >
-            <a href="javascript:;">删除</a>
+            <a href="#">删除</a>
           </Popconfirm>
         </Menu.Item>
       </Menu>
@@ -81,6 +81,7 @@ const RolePage: FC = () => {
   }
 
   const showCard = (record:any, type:number) => {
+    setModel(record);
     setLeftCardVisiable(true);
     setRightCardSpan(12);
     if (type == 1) {
@@ -100,6 +101,12 @@ const RolePage: FC = () => {
   const onFinish = (values: any) => {
     console.log("onFinish " + model);
     model?editRoleReq.run(values):addRoleReq.run(values);
+  }
+
+  const onPermissionFinish = (values: any) => {
+    console.log("onFinish " + values);
+    values.roleId = model?.id;
+    editRolePermissionReq.run(values);
   }
 
   const onCancel = () => {
@@ -139,6 +146,10 @@ const RolePage: FC = () => {
     onError : ()=>{message.success('编辑失败');},});
   const roleListReq = useRequest(roleList);
 
+  const editRolePermissionReq = useRequest(editRolePermission, {manual: true,
+    onSuccess : ()=>{message.success('编辑成功');roleListReq.refresh();onCancel();},
+    onError : ()=>{message.success('编辑失败');},});
+
   return (<>
     <Row gutter={16}>
       <Col span={rightCardSpan}> 
@@ -153,11 +164,11 @@ const RolePage: FC = () => {
             pagination={{current:roleListReq.data?.current, 
               defaultCurrent:1, 
               total:roleListReq.data?.total,
-              
               showTotal:(total, range)=> `${range[0]}-${range[1]} of ${total} items`
                }}
             onChange={onChangePage}
-            columns={columns} />
+            columns={columns} 
+            rowKey={record=>record.id} />
             
           </Spin>  
         </Card>
@@ -176,7 +187,7 @@ const RolePage: FC = () => {
             loading={permissionListReq.loading} 
             rolePermission={rolePermissionReq.data}
             permissionList={permissionListReq.data}
-            onFinish={onFinish}
+            onFinish={onPermissionFinish}
             />
         </Card>
       </Col>  

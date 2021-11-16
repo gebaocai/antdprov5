@@ -1,7 +1,7 @@
 // @ts-ignore
 /* eslint-disable */
 import { request } from 'umi';
-import { RoleItem } from './data';
+import { RoleItem, RolePermissionItem } from './data';
 
 export async function permissionTree(options?: { [key: string]: any }) {
   return request<Record<string, any>>('/api/sys/permission/queryTreeList', {
@@ -51,6 +51,17 @@ export async function roleList(
       'Content-Type': 'application/json',
     },
     params,
+    ...(options || {}),
+  });
+}
+
+export async function editRolePermission(body:RolePermissionItem, options?: { [key: string]: any }) {
+  return request<Record<string, any>>('/api/sys/role/savePermission', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    data: body,
     ...(options || {}),
   });
 }
