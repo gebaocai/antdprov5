@@ -6,13 +6,13 @@ import { DownOutlined, PlusOutlined} from '@ant-design/icons';
 
 import { UserItem } from './data';
 import { userList, addUser, editUser} from './service';
+import UserDrawer from './components/UserDrawer';
+import styles from './style.less';
+import { editRole } from '../role/service';
 
 const UserPage: FC = () => {
-  const [roleModalVisiable, setRoleModalVisiable] = useState(false);
-  const [leftCardVisiable, setLeftCardVisiable] = useState(false);
-  const [showRoleUser, setShowRoleUser] = useState(false);
-  const [rightCardSpan, setRightCardSpan] = useState(24);
-  const [model, setModel] = useState<UserItem>();
+  const [userDrawerVisiable, setUserDrawerVisiable] = useState(false);
+  const [user, setUser] = useState();
   
   const columns = [
     {
@@ -35,8 +35,8 @@ const UserPage: FC = () => {
     },
     {
       title: '性别',
-      dataIndex: 'sex',
-      key: 'sex',
+      dataIndex: 'gender',
+      key: 'gender',
       align: 'center',
       render: function(text:number) {
         if (text == 1) {
@@ -108,7 +108,7 @@ const UserPage: FC = () => {
     const menu = (
       <Menu>
         <Menu.Item key="0">
-          <a href="#" onClick={()=>showRoleModal(record, 2)}>编辑</a>
+          <a href="#" onClick={()=>showUserDrawer(record, 2)}>编辑</a>
         </Menu.Item>
         <Menu.Divider />
         <Menu.Item key="3" >
@@ -131,31 +131,30 @@ const UserPage: FC = () => {
 
   }
 
-  const onFinish = (values: any) => {
-    console.log("onFinish " + model);
+  const onFinish = (fieldsValue: any) => {
+    const values = {
+      ...fieldsValue,
+      'date-picker': fieldsValue['birthday'].format('YYYY-MM-DD'),
+    };
+    console.log("onFinish " + values);
+    if (values['id']) {
+      editUserReq.run(values);
+    } else {
+      addUserReq.run(values);
+    }
   }
 
-  const onPermissionFinish = (values: any) => {
-    console.log("onFinish " + values);
-    values.roleId = model?.id;
-  }
 
   const onCancel = () => {
     console.log("onCancel")
-    setRoleModalVisiable(false);
+    setUserDrawerVisiable(false);
   }
 
-  const onCloseCard = () => {
-    console.log("onCloseCard")
-    setLeftCardVisiable(false);
-    setRightCardSpan(24);
-  }
-
-  const showRoleModal = (record:any, type: number) => {
+  const showUserDrawer = (record:any, type: number) => {
     console.log("typeis " + type)
-    console.log("record is " + record)
-    setRoleModalVisiable(true);
-    setModel(record);
+    console.log("record " + record);
+    setUserDrawerVisiable(true)
+    setUser(record)
   }
 
   const onChangePage = (pagination, filters, sorter) => {
@@ -177,47 +176,32 @@ const UserPage: FC = () => {
   const userListReq = useRequest(userList);
 
   return (<>
-    <Row gutter={16}>
-      <Col span={rightCardSpan}> 
-        <Card>
-          <Space align="center">
-          <Button onClick={()=>showRoleModal(null, 1)} type="primary" shape="round" icon={<PlusOutlined />} style={{marginBottom: 20}}>新增</Button> 
-          </Space>
-          <Spin spinning={userListReq.loading}>
-          <Table 
-            rowSelection={{type:'checkbox'}}
-            dataSource={userListReq.data?.records}
-            pagination={{current:userListReq.data?.current, 
-              defaultCurrent:1, 
-              total:userListReq.data?.total,
-              showTotal:(total, range)=> `${range[0]}-${range[1]} of ${total} items`
-               }}
-            onChange={onChangePage}
-            columns={columns} 
-            rowKey={record=>record.id} />
-            
-          </Spin>  
-        </Card>
-
-        {/* <RoleModal 
-          modalVisible={roleModalVisiable} 
-          model={model}
-          onFinish={onFinish}
-          onCancel={onCancel} /> */}
-      </Col>
-      {/* <Col span={12}> 
-        <Card bordered={false} hidden={!leftCardVisiable} extra={<CloseCircleOutlined onClick={onCloseCard}/> }>
-          <RoleUser hidden={!showRoleUser}></RoleUser>
-          <RolePermission 
-            hidden={showRoleUser}
-            loading={permissionListReq.loading} 
-            rolePermission={rolePermissionReq.data}
-            permissionList={permissionListReq.data}
-            onFinish={onPermissionFinish}
-            />
-        </Card>
-      </Col>   */}
-    </Row>
+      <Card bordered={false}>
+        <Space align="center">
+        <Button onClick={()=>showUserDrawer(null, 1)} type="primary" shape="round" icon={<PlusOutlined />} style={{marginBottom: 20}}>新增</Button> 
+        </Space>
+        <Spin spinning={userListReq.loading}>
+        <Table 
+          rowSelection={{type:'checkbox'}}
+          dataSource={userListReq.data?.records}
+          pagination={{current:userListReq.data?.current, 
+            defaultCurrent:1, 
+            total:userListReq.data?.total,
+            showTotal:(total, range)=> `${range[0]}-${range[1]} of ${total} items`
+              }}
+          onChange={onChangePage}
+          columns={columns} 
+          rowKey={record=>record.id} />
+          
+        </Spin>  
+      </Card>
+      
+      <UserDrawer 
+        visible={userDrawerVisiable}
+        user={user}
+        onFinish={onFinish}
+        onClose={onCancel}
+        />
     </>
 
   );

@@ -35,7 +35,6 @@ const RolePermission: FC<RolePermissionProps> = (props) => {
     md: 12
   };
 
-  console.log(role);
   const onExpand = (expandedKeysValue: React.Key[]) => {
     console.log('onExpand', expandedKeysValue);
     // if not set autoExpandParent to false, if children expanded, parent can not collapse.

@@ -4,7 +4,7 @@ import { request } from 'umi';
 import { UserItem } from './data';
 
 export async function addUser(body: UserItem, options?: { [key: string]: any }) {
-  return request<Record<string, any>>('/api/sys/role/save', {
+  return request<Record<string, any>>('/api/sys/user/save', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -15,7 +15,7 @@ export async function addUser(body: UserItem, options?: { [key: string]: any }) 
 }
 
 export async function editUser(body: UserItem, options?: { [key: string]: any }) {
-  return request<Record<string, any>>('/api/sys/role/edit', {
+  return request<Record<string, any>>('/api/sys/user/edit', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
