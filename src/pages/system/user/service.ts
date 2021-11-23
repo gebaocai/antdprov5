@@ -40,3 +40,10 @@ export async function userList(
     ...(options || {}),
   });
 }
+
+export async function departList(options?: { [key: string]: any }) {
+  return request<Record<string, any>>('/api/sys/sysDepart/treeList', {
+    method: 'GET',
+    ...(options || {}),
+  });
+}

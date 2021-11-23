@@ -1,10 +1,13 @@
+import { useRequest } from 'umi';
 import React, { useState, useEffect } from 'react';
-import { Card, Select, Button } from 'antd';
-import { Form, Input, Checkbox, Drawer, Radio, DatePicker} from 'antd';
+import { Card, Select, Button, Modal } from 'antd';
+import { Form, Input, Tree, Drawer, DatePicker} from 'antd';
 import { FormInstance } from 'antd/es/form';
 import { Store } from 'rc-field-form/lib/interface';
+import {ApartmentOutlined } from '@ant-design/icons';
 import moment from 'moment';
 const { Option } = Select;
+import { departList } from '../service';
 
 type UserDrawerProps = {
   visible: boolean;
@@ -22,17 +25,63 @@ const tailLayout = {
     wrapperCol: { offset: 8, span: 8 },
 };
 
+const options = [];
+for (let i = 0; i < 100000; i++) {
+  const value = `${i.toString(36)}${i}`;
+  options.push({
+    value,
+    disabled: i === 10,
+  });
+}
+
+function handleChange(value) {
+  console.log(`selected ${value}`);
+}
+
+
+
 const UserDrawer: React.FC<UserDrawerProps> = (props) => {
   const { visible, onClose, onFinish, user} = props;
   const formRef = React.createRef<FormInstance>();
+  const [showDepartModal, setShowDepartModal] = useState(false);
+  const [checkedKeys, setCheckedKeys] = useState<React.Key[]>([]);
+  const [departNames, setDepartNames] = useState<string>(user?.departNames);
 
   if (user) {
     user.birthday = moment(user?.birthday, 'YYYY-MM-DD');
   }
+
+  const selectDepart=() => {
+    
+    if (user?.departIds) {
+      setShowDepartModal(user.departIds.split(","));
+    }
+    setShowDepartModal(true);
+  }
+  const handleOk = () => {
+    formRef.current!.setFieldsValue({
+      departIds: checkedKeys.join(","),
+      departNames: departNames
+    });
+    setShowDepartModal(false);
+  };
+
+  const handleCancel = () => {
+    setShowDepartModal(false);
+  };
+
+  const onCheck = (checkedKeysValue: React.Key[], info: any) => {
+    console.log('onCheck', checkedKeysValue);
+    console.log('onCheck info', info);
+    setCheckedKeys(checkedKeysValue);
+    const departNames = info.checkedNodes.map(a=>a.title).join(',');
+    setDepartNames(departNames);
+  };
   
+  const listDepart = useRequest(departList);
 
   return (
-    
+        <>
         <Drawer 
             // title={title} 
             placement="right"
@@ -73,6 +122,35 @@ const UserDrawer: React.FC<UserDrawerProps> = (props) => {
             <Input.Password />
             </Form.Item>
             <Form.Item
+            label="角色分配"
+            name="roleIds"
+            rules={[{ required: true, message: '请输入密码!' }]}
+            >
+              <Select
+                mode="multiple"
+                style={{ width: '100%' }}
+                placeholder="Please select"
+                defaultValue={['a10', 'c12']}
+                onChange={handleChange}
+                options={options}
+              />
+            </Form.Item>
+            <Form.Item
+            name="departIds"
+            rules={[{ required: true, message: '请输入密码!' }]}
+            hidden={true}
+            >
+            <Input />
+            </Form.Item>
+            <Form.Item
+            label="部门分配"
+            name="departNames"
+            rules={[{ required: true, message: '请输入密码!' }]}
+            >
+            <Input prefix={<ApartmentOutlined />} onClick={selectDepart}/>
+            </Form.Item>
+            
+            <Form.Item
             label="生日"
             name="birthday"
             >
@@ -109,7 +187,25 @@ const UserDrawer: React.FC<UserDrawerProps> = (props) => {
         </Form>
         </Card>
         </Drawer>
-    
+        <Modal
+          title={"选择部门"}
+          visible={visible && showDepartModal}
+          destroyOnClose
+          onOk={handleOk} 
+          onCancel={handleCancel}
+        >
+          <Tree
+              checkable
+              defaultExpandAll={true}
+              selectable={false}
+              // showLine={{showLeafIcon: false}}
+              treeData={listDepart.data}
+              checkedKeys={checkedKeys}
+              onCheck={onCheck}
+              style={{marginTop:10}}
+              />
+          </Modal>
+        </>
   );
 };
 
