@@ -1,13 +1,13 @@
 import { useRequest } from 'umi';
 import React, { useState, useEffect } from 'react';
-import { Card, Select, Button, Modal } from 'antd';
+import { Card, Select, Button, Modal, Spin } from 'antd';
 import { Form, Input, Tree, Drawer, DatePicker} from 'antd';
 import { FormInstance } from 'antd/es/form';
 import { Store } from 'rc-field-form/lib/interface';
 import {ApartmentOutlined } from '@ant-design/icons';
 import moment from 'moment';
 const { Option } = Select;
-import { departList } from '../service';
+import { departList, roleList } from '../service';
 
 type UserDrawerProps = {
   visible: boolean;
@@ -25,27 +25,13 @@ const tailLayout = {
     wrapperCol: { offset: 8, span: 8 },
 };
 
-const options = [];
-for (let i = 0; i < 100000; i++) {
-  const value = `${i.toString(36)}${i}`;
-  options.push({
-    value,
-    disabled: i === 10,
-  });
-}
-
-function handleChange(value) {
-  console.log(`selected ${value}`);
-}
-
-
-
 const UserDrawer: React.FC<UserDrawerProps> = (props) => {
   const { visible, onClose, onFinish, user} = props;
   const formRef = React.createRef<FormInstance>();
   const [showDepartModal, setShowDepartModal] = useState(false);
   const [checkedKeys, setCheckedKeys] = useState<React.Key[]>([]);
   const [departNames, setDepartNames] = useState<string>(user?.departNames);
+  const [options, setOptions] = useState([]);
 
   if (user) {
     user.birthday = moment(user?.birthday, 'YYYY-MM-DD');
@@ -70,6 +56,10 @@ const UserDrawer: React.FC<UserDrawerProps> = (props) => {
     setShowDepartModal(false);
   };
 
+  const handleRoleChange = (value) =>{
+    console.log(`selected ${value}`);
+  }
+
   const onCheck = (checkedKeysValue: React.Key[], info: any) => {
     console.log('onCheck', checkedKeysValue);
     console.log('onCheck info', info);
@@ -78,10 +68,12 @@ const UserDrawer: React.FC<UserDrawerProps> = (props) => {
     setDepartNames(departNames);
   };
   
+  const listRole = useRequest(roleList);
   const listDepart = useRequest(departList);
 
   return (
         <>
+        <Spin spinning={listRole.loading}>
         <Drawer 
             // title={title} 
             placement="right"
@@ -131,9 +123,13 @@ const UserDrawer: React.FC<UserDrawerProps> = (props) => {
                 style={{ width: '100%' }}
                 placeholder="Please select"
                 defaultValue={['a10', 'c12']}
-                onChange={handleChange}
-                options={options}
-              />
+                onChange={handleRoleChange}
+                // options={options}
+              >
+                {listRole.data?.map((item, index)=>(
+                  <Option value={item.id}>{item.name}</Option>
+                ))}
+              </Select>
             </Form.Item>
             <Form.Item
             name="departIds"
@@ -187,6 +183,8 @@ const UserDrawer: React.FC<UserDrawerProps> = (props) => {
         </Form>
         </Card>
         </Drawer>
+        </Spin>
+        <Spin spinning={listDepart.loading}>
         <Modal
           title={"选择部门"}
           visible={visible && showDepartModal}
@@ -205,6 +203,7 @@ const UserDrawer: React.FC<UserDrawerProps> = (props) => {
               style={{marginTop:10}}
               />
           </Modal>
+          </Spin>
         </>
   );
 };

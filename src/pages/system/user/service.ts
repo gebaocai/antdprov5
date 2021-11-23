@@ -47,3 +47,14 @@ export async function departList(options?: { [key: string]: any }) {
     ...(options || {}),
   });
 }
+
+export async function roleList(
+  options?: { [key: string]: any }) {
+  return request<Record<string, any>>('/api/sys/role/listAll', {
+    method: 'GET',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    ...(options || {}),
+  });
+}
