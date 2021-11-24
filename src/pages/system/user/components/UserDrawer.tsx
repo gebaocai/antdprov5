@@ -32,6 +32,7 @@ const UserDrawer: React.FC<UserDrawerProps> = (props) => {
   const [checkedKeys, setCheckedKeys] = useState<React.Key[]>([]);
   const [departNames, setDepartNames] = useState<string>(user?.departNames);
   const [options, setOptions] = useState([]);
+  const [defaultOptions, setDefaultOptions] = useState([user?.roleIds?.split(',')]);
 
   if (user) {
     user.birthday = moment(user?.birthday, 'YYYY-MM-DD');
@@ -122,7 +123,7 @@ const UserDrawer: React.FC<UserDrawerProps> = (props) => {
                 mode="multiple"
                 style={{ width: '100%' }}
                 placeholder="Please select"
-                defaultValue={['a10', 'c12']}
+                defaultValue={defaultOptions}
                 onChange={handleRoleChange}
                 // options={options}
               >
