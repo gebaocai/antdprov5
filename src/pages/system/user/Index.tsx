@@ -5,7 +5,7 @@ import { Divider, Menu, Dropdown, Popconfirm, Spin, message } from 'antd';
 import { DownOutlined, PlusOutlined} from '@ant-design/icons';
 
 import { UserItem } from './data';
-import { userList, addUser, editUser} from './service';
+import { userList, addUser, editUser, roleList, departList} from './service';
 import UserDrawer from './components/UserDrawer';
 import styles from './style.less';
 import { editRole } from '../role/service';
@@ -58,6 +58,12 @@ const UserPage: FC = () => {
       title: '电话',
       dataIndex: 'phone',
       key: 'phone',
+      align: 'center',
+    },
+    {
+      title: '部门',
+      dataIndex: 'departNames',
+      key: 'departNames',
       align: 'center',
     },
     {
@@ -155,6 +161,9 @@ const UserPage: FC = () => {
     console.log("typeis " + type)
     console.log("record " + record);
     setUserDrawerVisiable(true)
+    listRole.run();
+    listDepart.run();
+    
     setUser(record)
   }
 
@@ -175,6 +184,8 @@ const UserPage: FC = () => {
     onSuccess : ()=>{message.success('编辑成功');userListReq.refresh();onCancel();},
     onError : ()=>{message.success('编辑失败');},});
   const userListReq = useRequest(userList);
+  const listRole = useRequest(roleList, {manual: true});
+  const listDepart = useRequest(departList, {manual: true});
 
   return (<>
       <Card bordered={false}>
@@ -200,6 +211,8 @@ const UserPage: FC = () => {
       <UserDrawer 
         visible={userDrawerVisiable}
         user={user}
+        listDepart={listDepart}
+        listRole={listRole}
         onFinish={onFinish}
         onClose={onCancel}
         />

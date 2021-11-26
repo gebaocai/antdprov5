@@ -15,6 +15,8 @@ type UserDrawerProps = {
 //   onCancel: () => void;
   onFinish: (values:any) => void;
   user?: Store;
+  listDepart?: any;
+  listRole?: any;
 };
 
 const layout = {
@@ -26,7 +28,7 @@ const tailLayout = {
 };
 
 const UserDrawer: React.FC<UserDrawerProps> = (props) => {
-  const { visible, onClose, onFinish, user} = props;
+  const { visible, onClose, onFinish, user, listDepart, listRole} = props;
   const formRef = React.createRef<FormInstance>();
   const [showDepartModal, setShowDepartModal] = useState(false);
   const [checkedKeys, setCheckedKeys] = useState<React.Key[]>([]);
@@ -68,9 +70,6 @@ const UserDrawer: React.FC<UserDrawerProps> = (props) => {
     const departNames = info.checkedNodes.map(a=>a.title).join(',');
     setDepartNames(departNames);
   };
-  
-  const listRole = useRequest(roleList);
-  const listDepart = useRequest(departList);
 
   return (
         <>
