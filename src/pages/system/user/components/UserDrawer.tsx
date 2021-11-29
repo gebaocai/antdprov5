@@ -8,6 +8,7 @@ import {ApartmentOutlined } from '@ant-design/icons';
 import moment from 'moment';
 const { Option } = Select;
 import { departList, roleList } from '../service';
+import { values } from '@antv/util';
 
 type UserDrawerProps = {
   visible: boolean;
@@ -17,6 +18,7 @@ type UserDrawerProps = {
   user?: Store;
   listDepart?: any;
   listRole?: any;
+  userRoleList?: any;
 };
 
 const layout = {
@@ -28,13 +30,12 @@ const tailLayout = {
 };
 
 const UserDrawer: React.FC<UserDrawerProps> = (props) => {
-  const { visible, onClose, onFinish, user, listDepart, listRole} = props;
+  const { visible, onClose, onFinish, user, listDepart, listRole, userRoleList} = props;
   const formRef = React.createRef<FormInstance>();
   const [showDepartModal, setShowDepartModal] = useState(false);
   const [checkedKeys, setCheckedKeys] = useState<React.Key[]>([]);
   const [departNames, setDepartNames] = useState<string>(user?.departNames);
-  const [options, setOptions] = useState([]);
-  const [defaultOptions, setDefaultOptions] = useState([user?.roleIds?.split(',')]);
+  // const [options, setOptions] = useState(user?.roleIds);
 
   if (user) {
     user.birthday = moment(user?.birthday, 'YYYY-MM-DD');
@@ -61,6 +62,7 @@ const UserDrawer: React.FC<UserDrawerProps> = (props) => {
 
   const handleRoleChange = (value) =>{
     console.log(`selected ${value}`);
+    // setOptions(value);
   }
 
   const onCheck = (checkedKeysValue: React.Key[], info: any) => {
@@ -71,9 +73,22 @@ const UserDrawer: React.FC<UserDrawerProps> = (props) => {
     setDepartNames(departNames);
   };
 
+  useEffect(()=>{
+    // console.log("before optioins is " + options);
+    if (user && !userRoleList.loading) {
+      formRef.current?.setFieldsValue({
+        roleIds: userRoleList.data
+      });
+    }
+    const x = formRef.current?.getFieldValue('roleIds');
+    console.log("after optioins is " + x);
+    
+  }, [user?.id, userRoleList.data]);
+
+  
   return (
         <>
-        <Spin spinning={listRole.loading}>
+        <Spin spinning={listRole.loading || userRoleList.loading}>
         <Drawer 
             // title={title} 
             placement="right"
@@ -88,6 +103,7 @@ const UserDrawer: React.FC<UserDrawerProps> = (props) => {
             ref={formRef} 
             initialValues={user}
             onFinish={onFinish}>
+            
             <Form.Item
             name="id"
             hidden
@@ -122,12 +138,12 @@ const UserDrawer: React.FC<UserDrawerProps> = (props) => {
                 mode="multiple"
                 style={{ width: '100%' }}
                 placeholder="Please select"
-                defaultValue={defaultOptions}
+                // defaultValue={options}
                 onChange={handleRoleChange}
                 // options={options}
               >
                 {listRole.data?.map((item, index)=>(
-                  <Option value={item.id}>{item.name}</Option>
+                  <Option key={item.id} value={item.id}>{item.name}</Option>
                 ))}
               </Select>
             </Form.Item>

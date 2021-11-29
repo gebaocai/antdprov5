@@ -5,7 +5,7 @@ import { Divider, Menu, Dropdown, Popconfirm, Spin, message } from 'antd';
 import { DownOutlined, PlusOutlined} from '@ant-design/icons';
 
 import { UserItem } from './data';
-import { userList, addUser, editUser, roleList, departList} from './service';
+import { userList, addUser, editUser, roleList, departList, userRoleList} from './service';
 import UserDrawer from './components/UserDrawer';
 import styles from './style.less';
 import { editRole } from '../role/service';
@@ -163,7 +163,10 @@ const UserPage: FC = () => {
     setUserDrawerVisiable(true)
     listRole.run();
     listDepart.run();
-    
+    if (record) {
+      record.roleIds = [];
+      userRoleListReq.run({userId: record.id});
+    } 
     setUser(record)
   }
 
@@ -186,6 +189,7 @@ const UserPage: FC = () => {
   const userListReq = useRequest(userList);
   const listRole = useRequest(roleList, {manual: true});
   const listDepart = useRequest(departList, {manual: true});
+  const userRoleListReq = useRequest(userRoleList, {manual: true});
 
   return (<>
       <Card bordered={false}>
@@ -213,6 +217,7 @@ const UserPage: FC = () => {
         user={user}
         listDepart={listDepart}
         listRole={listRole}
+        userRoleList={userRoleListReq}
         onFinish={onFinish}
         onClose={onCancel}
         />

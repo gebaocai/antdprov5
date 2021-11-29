@@ -58,3 +58,17 @@ export async function roleList(
     ...(options || {}),
   });
 }
+
+export async function userRoleList(
+  params: {
+    userId: string;
+  },
+  options?: { [key: string]: any },
+) {
+  return request<Record<string, any>>('/api/sys/userRole/list', {
+    method: 'GET',
+    // params: params,
+    params,
+    ...(options || {}),
+  });
+}
