@@ -1,4 +1,4 @@
-import React, { FC, useState } from 'react';
+import React, { FC, useState, useEffect } from 'react';
 import { Form, Typography, Tree, Button, Spin, Input} from 'antd';
 import { FormInstance } from 'antd/lib/form';
 import { DataNode } from 'rc-tree/lib/interface';
@@ -52,6 +52,10 @@ const RolePermission: FC<RolePermissionProps> = (props) => {
       permissionIds: checkedKeysValue.join()
     });
   };
+
+  useEffect(()=>{
+    setCheckedKeys(rolePermission);
+  }, [rolePermission])
 
   const formRef = React.createRef<FormInstance>();
 

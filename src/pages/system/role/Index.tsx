@@ -9,6 +9,7 @@ import RoleUser from './components/RoleUser';
 import RolePermission from './components/RolePermission';
 import { RoleItem } from './data';
 import { permissionTree, rolePermission, roleList, addRole, editRole, editRolePermission} from './service';
+import { userList} from './service';
 import { editDepart } from '../depart/service';
 
 const RolePage: FC = () => {
@@ -86,13 +87,16 @@ const RolePage: FC = () => {
     setRightCardSpan(12);
     if (type == 1) {
       setShowRoleUser(true);
+      userListReq.run({roleId:record.id});
     } else {
       
       setShowRoleUser(false);
       permissionListReq.run();
-      rolePermissionReq.run();
+      rolePermissionReq.run({roleId:record.id});
+      // rolePermissionReq.run({roleId:'123'});
     }
   }
+
 
   const deleteRecord = (record:any) => {
 
@@ -132,12 +136,18 @@ const RolePage: FC = () => {
     roleListReq.run({pageNo:pagination.current, pageSize:pagination.pageSize});
   }
 
+  const onRoleUserChangePage = (pagination, filters, sorter) => {
+    // console.log("page pageSize" + page+" "+ pageSize)
+    userListReq.run({pageNo:pagination.current, pageSize:pagination.pageSize});
+  }
+
   // function showTotal(total:number) {
   //   return `Total ${total} items`;
   // }
 
   const permissionListReq = useRequest(permissionTree, {manual: true});
   const rolePermissionReq = useRequest(rolePermission, {manual: true});
+  const userListReq = useRequest(userList, {manual: true});
   const addRoleReq = useRequest(addRole, {manual: true,
     onSuccess : ()=>{message.success('新增成功');roleListReq.refresh();onCancel();},
     onError : ()=>{message.success('新增失败');},});
@@ -181,9 +191,11 @@ const RolePage: FC = () => {
       </Col>
       <Col span={12}> 
         <Card bordered={false} hidden={!leftCardVisiable} extra={<CloseCircleOutlined onClick={onCloseCard}/> }>
-          <RoleUser hidden={!showRoleUser}></RoleUser>
+          <RoleUser 
+            hidden={!showRoleUser} 
+            userList={userListReq}></RoleUser>
           <RolePermission 
-            hidden={showRoleUser}
+            hidden={showRoleUser||rolePermissionReq.loading}
             loading={permissionListReq.loading} 
             rolePermission={rolePermissionReq.data}
             permissionList={permissionListReq.data}

@@ -1,45 +1,35 @@
 import React, { FC, useState } from 'react';
-import { Table, Card, Space, Button, Col, Row} from 'antd';
+import { Table, Card, Space, Button, Col, Row, Spin} from 'antd';
 import { Divider, Menu, Dropdown, Popconfirm } from 'antd';
 import { DownOutlined, PlusOutlined } from '@ant-design/icons';
 
 
 type RoleUserProps = {
   hidden: boolean;
+  userList?: any;
 };
 
 
 const RoleUser: FC<RoleUserProps> = (props) => {
-  const {hidden} = props;
-
-
-
-  const dataSource = [
-    {
-      key: '1',
-      account: 'gebaocai',
-      name: '葛葛',
-      state: '0'
-    },
-    {
-      key: '2',
-      account: 'yuan',
-      name: '思远',
-      state: '1'
-    },
-  ];
+  const {hidden, userList} = props;
   
   const columns = [
     {
       title: '用户账号',
-      dataIndex: 'account',
-      key: 'account',
+      dataIndex: 'username',
+      key: 'username',
       align: 'center',
     },
     {
-      title: '用户名称',
-      dataIndex: 'name',
-      key: 'name',
+      title: '真实姓名',
+      dataIndex: 'nickname',
+      key: 'nickname',
+      align: 'center',
+    },
+    {
+      title: '生日',
+      dataIndex: 'birthday',
+      key: 'birthday',
       align: 'center',
     },
     {
@@ -113,11 +103,12 @@ const RoleUser: FC<RoleUserProps> = (props) => {
           <Space align="center">
           <Button type="primary" shape="round" icon={<PlusOutlined />} style={{marginBottom: 20}}>新增</Button> 
           </Space>
+          <Spin spinning={userList?.loading}>
           <Table 
             rowSelection={{type:'checkbox'}}
-            dataSource={dataSource} 
+            dataSource={userList?.data?.records} 
             columns={columns} />
- 
+          </Spin>
     </div>
   );
 };

@@ -10,9 +10,15 @@ export async function permissionTree(options?: { [key: string]: any }) {
   });
 }
 
-export async function rolePermission(options?: { [key: string]: any }) {
-  return request<Record<string, any>>('/api/departPermission', {
+export async function rolePermission(
+  params: {
+    roleId: string;
+  },
+  options?: { [key: string]: any },
+) {
+  return request<Record<string, any>>('/api/sys/rolePermission/list', {
     method: 'GET',
+    params,
     ...(options || {}),
   });
 }
@@ -62,6 +68,23 @@ export async function editRolePermission(body:RolePermissionItem, options?: { [k
       'Content-Type': 'application/json',
     },
     data: body,
+    ...(options || {}),
+  });
+}
+
+export async function userList(
+  params: {
+    roleId: string;
+    pageNo?: number;
+    pageSize?: number;
+  },
+  options?: { [key: string]: any }) {
+  return request<Record<string, any>>('/api/sys/user/listByRoleId', {
+    method: 'GET',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    params,
     ...(options || {}),
   });
 }
