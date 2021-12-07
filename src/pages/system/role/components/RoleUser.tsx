@@ -1,8 +1,10 @@
+import { useRequest } from 'umi';
 import React, { FC, useState } from 'react';
-import { Table, Card, Space, Button, Col, Row, Spin} from 'antd';
+import { Table, Card, Space, Button, Col, Row, Spin, message} from 'antd';
 import { Divider, Menu, Dropdown, Popconfirm } from 'antd';
 import { DownOutlined, PlusOutlined } from '@ant-design/icons';
-
+import { departList, roleList, addUser } from '../../service';
+import UserDrawer from './UserDrawer';
 
 type RoleUserProps = {
   hidden: boolean;
@@ -12,6 +14,8 @@ type RoleUserProps = {
 
 const RoleUser: FC<RoleUserProps> = (props) => {
   const {hidden, userList} = props;
+  const [userDrawerVisiable, setUserDrawerVisiable] = useState(false);
+  
   
   const columns = [
     {
@@ -85,23 +89,42 @@ const RoleUser: FC<RoleUserProps> = (props) => {
   }
 
   const showDrawer = (record:any, type:number) => {
-
+    setUserDrawerVisiable(true);
+    listDepart.run();
+    listRole.run();
   }
 
   const deleteRecord = (record:any) => {
 
   }
 
-  const onFinish = (values: any) => {
+  const onFinish = (fieldsValue: any) => {
+    const values = {
+      ...fieldsValue,
+      'date-picker': fieldsValue['birthday'].format('YYYY-MM-DD'),
+      'roleIds': fieldsValue['roleIds'].join(',')
+    };
+    console.log("onFinish " + values);
+    addUserReq.run(values);
+  }
 
+  const onCancel = () => {
+    console.log("onCancel")
+    setUserDrawerVisiable(false);
   }
 
 
 
+  const listRole = useRequest(roleList, {manual: true});
+  const listDepart = useRequest(departList, {manual: true});
+  const addUserReq = useRequest(addUser, {manual: true,
+    onSuccess : ()=>{message.success('新增成功');userList.refresh();onCancel();},
+    onError : ()=>{message.success('新增失败');},});
+
   return (<div hidden={hidden}>
 
           <Space align="center">
-          <Button type="primary" shape="round" icon={<PlusOutlined />} style={{marginBottom: 20}}>新增</Button> 
+          <Button onClick={()=>showDrawer(null, 1)} type="primary" shape="round" icon={<PlusOutlined />} style={{marginBottom: 20}}>新增</Button> 
           </Space>
           <Spin spinning={userList?.loading}>
           <Table 
@@ -109,6 +132,13 @@ const RoleUser: FC<RoleUserProps> = (props) => {
             dataSource={userList?.data?.records} 
             columns={columns} />
           </Spin>
+          <UserDrawer 
+            visible={userDrawerVisiable}
+            listDepart={listDepart}
+            listRole={listRole}
+            onFinish={onFinish}
+            onClose={onCancel}
+        />
     </div>
   );
 };
