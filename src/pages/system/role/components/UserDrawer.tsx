@@ -15,8 +15,10 @@ type UserDrawerProps = {
   onClose: (e:any) => void;
 //   onCancel: () => void;
   onFinish: (values:any) => void;
+  user?: Store;
   listDepart?: any;
   listRole?: any;
+  userRoleList?: any;
 };
 
 const layout = {
@@ -28,14 +30,22 @@ const tailLayout = {
 };
 
 const UserDrawer: React.FC<UserDrawerProps> = (props) => {
-  const { visible, onClose, onFinish, listDepart, listRole} = props;
+  const { visible, onClose, onFinish, user, listDepart, listRole, userRoleList} = props;
   const formRef = React.createRef<FormInstance>();
   const [showDepartModal, setShowDepartModal] = useState(false);
   const [checkedKeys, setCheckedKeys] = useState<React.Key[]>([]);
-  const [departNames, setDepartNames] = useState<string>();
+  const [departNames, setDepartNames] = useState<string>(user?.departNames);
   // const [options, setOptions] = useState(user?.roleIds);
 
+  if (user) {
+    user.birthday = moment(user?.birthday, 'YYYY-MM-DD');
+  }
+
   const selectDepart=() => {
+    
+    if (user?.departIds) {
+      setShowDepartModal(user.departIds.split(","));
+    }
     setShowDepartModal(true);
   }
   const handleOk = () => {
@@ -62,10 +72,23 @@ const UserDrawer: React.FC<UserDrawerProps> = (props) => {
     const departNames = info.checkedNodes.map(a=>a.title).join(',');
     setDepartNames(departNames);
   };
+
+  useEffect(()=>{
+    // console.log("before optioins is " + options);
+    if (user && !userRoleList.loading) {
+      formRef.current?.setFieldsValue({
+        roleIds: userRoleList.data
+      });
+    }
+    const x = formRef.current?.getFieldValue('roleIds');
+    console.log("after optioins is " + x);
+    
+  }, [user?.id, userRoleList.data]);
+
   
   return (
         <>
-        <Spin spinning={listRole.loading}>
+        <Spin spinning={listRole.loading || userRoleList.loading}>
         <Drawer 
             // title={title} 
             placement="right"
@@ -78,6 +101,7 @@ const UserDrawer: React.FC<UserDrawerProps> = (props) => {
                 
         <Form {...layout} 
             ref={formRef} 
+            initialValues={user}
             onFinish={onFinish}>
             
             <Form.Item
@@ -98,13 +122,13 @@ const UserDrawer: React.FC<UserDrawerProps> = (props) => {
             >
             <Input/>
             </Form.Item>
-            <Form.Item
+            {user == undefined && (<Form.Item
             label="密码"
             name="password"
             rules={[{ required: true, message: '请输入密码!' }]}
             >
             <Input.Password />
-            </Form.Item>
+            </Form.Item>) }
             <Form.Item
             label="角色分配"
             name="roleIds"

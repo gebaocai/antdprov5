@@ -5,13 +5,15 @@ import { Divider, Menu, Dropdown, Popconfirm, Spin, message } from 'antd';
 import { DownOutlined, PlusOutlined} from '@ant-design/icons';
 
 import { UserItem } from './data';
-import { userList, addUser, editUser, roleList, departList, userRoleList} from './service';
+import { userList, addUser, editUser, roleList, departList, userRoleList, changePassword} from '../service';
 import UserDrawer from './components/UserDrawer';
+import ChangePasswordModal from './components/ChangePasswordModal';
 import styles from './style.less';
 import { editRole } from '../role/service';
 
 const UserPage: FC = () => {
   const [userDrawerVisiable, setUserDrawerVisiable] = useState(false);
+  const [changePWVisiable, setChangePWVisiable] = useState(false);
   const [user, setUser] = useState();
   
   const columns = [
@@ -116,6 +118,9 @@ const UserPage: FC = () => {
         <Menu.Item key="0">
           <a href="#" onClick={()=>showUserDrawer(record, 2)}>编辑</a>
         </Menu.Item>
+        <Menu.Item key="1">
+          <a href="#" onClick={()=>showChangePW(record, 2)}>修改密码</a>
+        </Menu.Item>
         <Menu.Divider />
         <Menu.Item key="3" >
           <Popconfirm
@@ -151,10 +156,24 @@ const UserPage: FC = () => {
     }
   }
 
+  const onChangePWFinish = (values: any) => {
+    changePasswordReq.run(values);
+  }
+
 
   const onCancel = () => {
     console.log("onCancel")
     setUserDrawerVisiable(false);
+  }
+
+  const onChangePWCancel = () => {
+    console.log("onCancel")
+    setChangePWVisiable(false);
+  }
+  
+  const showChangePW = (record:any, type: number) => {
+    setChangePWVisiable(true)
+    setUser(record)
   }
 
   const showUserDrawer = (record:any, type: number) => {
@@ -186,6 +205,9 @@ const UserPage: FC = () => {
   const editUserReq = useRequest(editUser, {manual: true,
     onSuccess : ()=>{message.success('编辑成功');userListReq.refresh();onCancel();},
     onError : ()=>{message.success('编辑失败');},});
+  const changePasswordReq = useRequest(changePassword, {manual: true,
+    onSuccess : ()=>{message.success('编辑成功');setChangePWVisiable(false)},
+    onError : ()=>{message.success('编辑失败');},});  
   const userListReq = useRequest(userList);
   const listRole = useRequest(roleList, {manual: true});
   const listDepart = useRequest(departList, {manual: true});
@@ -221,6 +243,12 @@ const UserPage: FC = () => {
         onFinish={onFinish}
         onClose={onCancel}
         />
+      <ChangePasswordModal 
+        modalVisible={changePWVisiable}
+        model={user}
+        onFinish={onChangePWFinish}
+        onCancel={onChangePWCancel}
+        />  
     </>
 
   );

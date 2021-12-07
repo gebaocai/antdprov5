@@ -3,7 +3,7 @@ import React, { FC, useState } from 'react';
 import { Table, Card, Space, Button, Col, Row, Spin, message} from 'antd';
 import { Divider, Menu, Dropdown, Popconfirm } from 'antd';
 import { DownOutlined, PlusOutlined } from '@ant-design/icons';
-import { departList, roleList, addUser } from '../../service';
+import { departList, roleList, addUser, editUser,userRoleList } from '../../service';
 import UserDrawer from './UserDrawer';
 
 type RoleUserProps = {
@@ -15,7 +15,7 @@ type RoleUserProps = {
 const RoleUser: FC<RoleUserProps> = (props) => {
   const {hidden, userList} = props;
   const [userDrawerVisiable, setUserDrawerVisiable] = useState(false);
-  
+  const [user, setUser] = useState();
   
   const columns = [
     {
@@ -92,6 +92,11 @@ const RoleUser: FC<RoleUserProps> = (props) => {
     setUserDrawerVisiable(true);
     listDepart.run();
     listRole.run();
+    if (record) {
+      record.roleIds = [];
+      userRoleListReq.run({userId: record.id});
+    } 
+    setUser(record)
   }
 
   const deleteRecord = (record:any) => {
@@ -105,7 +110,11 @@ const RoleUser: FC<RoleUserProps> = (props) => {
       'roleIds': fieldsValue['roleIds'].join(',')
     };
     console.log("onFinish " + values);
-    addUserReq.run(values);
+    if (values['id']) {
+      editUserReq.run(values);
+    } else {
+      addUserReq.run(values);
+    }
   }
 
   const onCancel = () => {
@@ -120,11 +129,14 @@ const RoleUser: FC<RoleUserProps> = (props) => {
   const addUserReq = useRequest(addUser, {manual: true,
     onSuccess : ()=>{message.success('新增成功');userList.refresh();onCancel();},
     onError : ()=>{message.success('新增失败');},});
-
+  const editUserReq = useRequest(editUser, {manual: true,
+    onSuccess : ()=>{message.success('编辑成功');userList.refresh();onCancel();},
+    onError : ()=>{message.success('编辑失败');},});  
+  const userRoleListReq = useRequest(userRoleList, {manual: true});  
   return (<div hidden={hidden}>
 
           <Space align="center">
-          <Button onClick={()=>showDrawer(null, 1)} type="primary" shape="round" icon={<PlusOutlined />} style={{marginBottom: 20}}>新增</Button> 
+          <Button onClick={()=>showDrawer(undefined, 1)} type="primary" shape="round" icon={<PlusOutlined />} style={{marginBottom: 20}}>新增</Button> 
           </Space>
           <Spin spinning={userList?.loading}>
           <Table 
@@ -134,8 +146,10 @@ const RoleUser: FC<RoleUserProps> = (props) => {
           </Spin>
           <UserDrawer 
             visible={userDrawerVisiable}
+            user={user}
             listDepart={listDepart}
             listRole={listRole}
+            userRoleList={userRoleListReq}
             onFinish={onFinish}
             onClose={onCancel}
         />

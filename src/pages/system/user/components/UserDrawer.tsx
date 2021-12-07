@@ -122,13 +122,13 @@ const UserDrawer: React.FC<UserDrawerProps> = (props) => {
             >
             <Input/>
             </Form.Item>
-            <Form.Item
+            {user == undefined && (<Form.Item
             label="密码"
             name="password"
             rules={[{ required: true, message: '请输入密码!' }]}
             >
             <Input.Password />
-            </Form.Item>
+            </Form.Item>) }
             <Form.Item
             label="角色分配"
             name="roleIds"
