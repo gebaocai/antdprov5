@@ -2,8 +2,8 @@ import { useRequest } from 'umi';
 import React, { useState, useRef, useEffect } from 'react';
 import { Space, Row, Col, Tree, Tabs, Button, Card, Spin, message } from 'antd';
 import { depart, departList} from './service';
-import { permissionTree, departPermission, editDepart} from './service';
-import CreateDepartForm  from './components/CreateDepartForm';
+import { permissionTree, departPermission, editDepart, addDepart} from './service';
+import DepartModal  from './components/DepartModal';
 import EditDepartPermissionForm  from './components/EditDepartPermissionForm';
 import EditDepartForm  from './components/EditDepartForm';
 import styles from './style.less';
@@ -36,15 +36,8 @@ const TableList: React.FC = () => {
     console.log(num);
   };
 
-  const handleCancle = (num:any) => {
-    if (num == 1) {
-      setCreateFormVisable(false);
-    } else if (num == 2) {
-      
-      
-    } else {
-      
-    }
+  const onCancle = () => {
+    setCreateFormVisable(false);
   };
 
   const onSelect = (selectedKeysValue: React.Key[], info: any) => {
@@ -61,10 +54,18 @@ const TableList: React.FC = () => {
     departPermissionReq.run();
   };
 
-  const onFinish = (values: DepartData) => {
+  const onFinish = (values: any) => {
     console.log('Success:', values);
-    run(values);
-    return true;
+    if (values['id']) {
+      editDepartReq.run(values);
+    } else {
+      addDepartReq.run(values);
+    }
+  };
+
+  const onCreateFinish = (values: any) => {
+    console.log('Success:', values);
+    addDepartReq.run(values);
   };
 
   const onPermissionFinish = (values: any) => {
@@ -72,10 +73,16 @@ const TableList: React.FC = () => {
     return true;
   };
 
-  const { run } = useRequest(editDepart, {
+  const editDepartReq = useRequest(editDepart, {
     manual: true,
     onSuccess : ()=>{message.success('修改成功');onClearSelected();},
     onError : ()=>{message.success('修改失败');},
+  });
+
+  const addDepartReq = useRequest(addDepart, {
+    manual: true,
+    onSuccess : ()=>{message.success('添加成功');onClearSelected();},
+    onError : ()=>{message.success('加失败');},
   });
 
   const getCurrSelectedTitle = () => {
@@ -151,7 +158,7 @@ const TableList: React.FC = () => {
             </TabPane>
           </Tabs>
         </Col>
-        <CreateDepartForm modalVisible={createFormVisable} onCancel={()=>handleCancle(1)} title="新增" />
+        <DepartModal modalVisible={createFormVisable} onCancel={onCancle} onFinish={onCreateFinish} title="新增" />
       </Row>
       
   );

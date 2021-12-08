@@ -1,25 +1,18 @@
 import React from 'react';
 import { Modal } from 'antd';
-import { Form, Input, Checkbox,Radio, InputNumber } from 'antd';
+import { Form, Input, Button,Radio, InputNumber } from 'antd';
 
-type CreateFormProps = {
+type DepartModalProps = {
   modalVisible: boolean;
   onCancel: () => void;
+  onFinish: (values:any) => void;
   title: string;
 };
 
 const { TextArea } = Input;
 
-const CreateDepartForm: React.FC<CreateFormProps> = (props) => {
-  const { modalVisible, onCancel, title } = props;
-
-  const onFinish = (values: any) => {
-    console.log('Success:', values);
-  };
-
-  const onFinishFailed = (errorInfo: any) => {
-    console.log('Failed:', errorInfo);
-  };
+const DepartModal: React.FC<DepartModalProps> = (props) => {
+  const { modalVisible, onFinish, onCancel, title } = props;
 
   const labelCol = { // 24格栅格系统，label所占为 a
     xxl: 5, // ≥1600px 响应式栅格
@@ -33,22 +26,24 @@ const CreateDepartForm: React.FC<CreateFormProps> = (props) => {
     lg: 14,
     md: 12
   };
+  const tailLayout = {
+    wrapperCol: { offset: 8, span: 16 },
+  };
 
   return (
     <Modal
       destroyOnClose
       title={title}
       visible={modalVisible}
-      onCancel={() => onCancel()}
+      onCancel={onCancel}
       width={800}
+      footer={null}
     >
       <Form
         name="basic"
         labelCol={labelCol}
         wrapperCol={wrapperCol}
-        initialValues={{ remember: true }}
         onFinish={onFinish}
-        onFinishFailed={onFinishFailed}
       >
         <Form.Item
           label="机构名称"
@@ -101,9 +96,17 @@ const CreateDepartForm: React.FC<CreateFormProps> = (props) => {
         >
           <TextArea rows={2} placeholder="请输入备注"/>
         </Form.Item>
+        <Form.Item {...tailLayout}>
+          <Button type="primary" htmlType="submit">
+            提交
+          </Button>
+          <Button htmlType="button">
+            重置
+          </Button>
+        </Form.Item>
       </Form>
     </Modal>
   );
 };
 
-export default CreateDepartForm;
+export default DepartModal;

@@ -79,3 +79,14 @@ export async function editDepart(body: DepartData, options?: { [key: string]: an
     ...(options || {}),
   });
 }
+
+export async function addDepart(body: any, options?: { [key: string]: any }) {
+  return request<Record<string, any>>('/api/sys/sysDepart/add', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    data: body,
+    ...(options || {}),
+  });
+}
