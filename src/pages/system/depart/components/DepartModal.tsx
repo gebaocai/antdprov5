@@ -1,18 +1,21 @@
 import React from 'react';
 import { Modal } from 'antd';
-import { Form, Input, Button,Radio, InputNumber } from 'antd';
+import { Form, Input, Button,Radio, InputNumber, Select } from 'antd';
+
+const { Option } = Select;
 
 type DepartModalProps = {
   modalVisible: boolean;
   onCancel: () => void;
   onFinish: (values:any) => void;
   title: string;
+  selectedTitle: string|undefined;
 };
 
 const { TextArea } = Input;
 
 const DepartModal: React.FC<DepartModalProps> = (props) => {
-  const { modalVisible, onFinish, onCancel, title } = props;
+  const { modalVisible, onFinish, onCancel, selectedTitle, title } = props;
 
   const labelCol = { // 24格栅格系统，label所占为 a
     xxl: 5, // ≥1600px 响应式栅格
@@ -52,6 +55,12 @@ const DepartModal: React.FC<DepartModalProps> = (props) => {
         >
           <Input placeholder="请输入机构/部门名称!"/>
         </Form.Item>
+
+        {selectedTitle !=undefined && (<Form.Item
+          label="上级部门"
+        >
+           <Select defaultValue={selectedTitle} disabled />
+        </Form.Item>)}
 
         <Form.Item
           label="机构类型"

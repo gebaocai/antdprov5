@@ -79,8 +79,8 @@ const EditDepartForm: React.FC<EditFormProps> = (props) => {
             <Form.Item
               label="机构名称"
               name="id"
+              hidden
             >
-              <Input hidden />
             </Form.Item>
 
             <Form.Item

@@ -18,20 +18,23 @@ const { Search } = Input;
 const TableList: React.FC = () => {
   const [createFormVisable, setCreateFormVisable] = useState(false);
   const [selectedKeys, setSelectedKeys] = useState<React.Key[]>([]);
-  const [selectedTitle, setSelectedTitle] = useState<String>();
+  const [selectedTitle, setSelectedTitle] = useState<string>();
   
   const callback = (key:any) => {
     console.log(key);
   };
 
   const handleAdd = (num:any) => {
+    
     if (num == 1) {
       setCreateFormVisable(true);
     } else if (num == 2) {
       
-      
-    } else {
-      
+      if (selectedTitle == undefined) {
+        message.warning('请先选择一个部门!');
+      } else {
+        setCreateFormVisable(true);
+      }
     }
     console.log(num);
   };
@@ -65,6 +68,9 @@ const TableList: React.FC = () => {
 
   const onCreateFinish = (values: any) => {
     console.log('Success:', values);
+    if (selectedKeys.length>0) {
+      values.parentId = selectedKeys[0];
+    }
     addDepartReq.run(values);
   };
 
@@ -81,7 +87,7 @@ const TableList: React.FC = () => {
 
   const addDepartReq = useRequest(addDepart, {
     manual: true,
-    onSuccess : ()=>{message.success('添加成功');onClearSelected();},
+    onSuccess : ()=>{message.success('添加成功');setCreateFormVisable(false); onClearSelected();},
     onError : ()=>{message.success('加失败');},
   });
 
@@ -91,7 +97,7 @@ const TableList: React.FC = () => {
 
   const onClearSelected = () => {
     setSelectedKeys([]);
-    setSelectedTitle("");
+    setSelectedTitle(undefined);
     detailDepart.data = null;
     listDepart.refresh();
   };
@@ -113,7 +119,7 @@ const TableList: React.FC = () => {
           <Card>
             <Space size='small'>
               <Button type="primary" onClick={()=>handleAdd(1)}>添加部门</Button>
-              <Button type="primary">添加下级</Button>
+              <Button type="primary" onClick={()=>handleAdd(2)}>添加下级</Button>
               <Button type="primary">导出</Button>
               <Button type="primary">导入</Button>
               <Button type="primary" danger>删除</Button>
@@ -130,7 +136,8 @@ const TableList: React.FC = () => {
 
             <Spin spinning={listDepart.loading}>
               <Tree
-                showLine={{showLeafIcon: false}}
+                checkable
+                // showLine={{showLeafIcon: false}}
                 treeData={listDepart.data}
                 selectedKeys={selectedKeys}
                 onSelect={onSelect}
@@ -158,7 +165,7 @@ const TableList: React.FC = () => {
             </TabPane>
           </Tabs>
         </Col>
-        <DepartModal modalVisible={createFormVisable} onCancel={onCancle} onFinish={onCreateFinish} title="新增" />
+        <DepartModal modalVisible={createFormVisable} selectedTitle={selectedTitle} onCancel={onCancle} onFinish={onCreateFinish} title="新增" />
       </Row>
       
   );
