@@ -57,6 +57,26 @@ const TableList: React.FC = () => {
     departPermissionReq.run();
   };
 
+  const onCheck = (checkedKeys: React.Key[], info: any) => {
+    console.log('onCheck keys', checkedKeys);
+    console.log('onCheck', info);
+    if (info.checked) {
+      checkedKeys = [info.node.id];
+      setSelectedKeys(checkedKeys);
+      setSelectedTitle(info.node.title);
+      detailDepart.run( {
+        id : info.node.id
+      },);
+  
+      permissionListReq.run();
+  
+      departPermissionReq.run();
+    } else {
+      setSelectedKeys([]);
+      setSelectedTitle(undefined);
+    }
+  };	
+
   const onFinish = (values: any) => {
     console.log('Success:', values);
     if (values['id']) {
@@ -140,7 +160,9 @@ const TableList: React.FC = () => {
                 // showLine={{showLeafIcon: false}}
                 treeData={listDepart.data}
                 selectedKeys={selectedKeys}
+                checkedKeys={selectedKeys}
                 onSelect={onSelect}
+                onCheck={onCheck}
                 style={{marginTop:10}}
                 />
               </Spin>
