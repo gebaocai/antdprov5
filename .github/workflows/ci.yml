@@ -10,18 +10,15 @@ jobs:
         node_version: [12.x, 14.x]
         os: [ubuntu-latest, windows-latest, macOS-latest]
     steps:
-      - uses: actions/checkout@v1
-      - name: Use Node.js ${{ matrix.node_version }}
-        uses: actions/setup-node@v1
+      - uses: actions/checkout@v2
+      - name: build
+        run: |
+          yarn
+          yarn add umi-plugin-pro --save
+          yarn build
+      - name: upload dist artifact
+        uses: actions/upload-artifact@v2
         with:
-          node-version: ${{ matrix.node_version }}
-      - run: echo ${{github.ref}}
-      - run: npm install
-      - run: yarn run tsc
-      - run: yarn run build
-      - run: yarn run test:e2e
-        env:
-          CI: true
-          PROGRESS: none
-          NODE_ENV: test
-          NODE_OPTIONS: --max_old_space_size=4096
+          name: dist
+          path: dist/
+          retention-days: 5
