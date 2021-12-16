@@ -7,7 +7,7 @@
         path: '/user/login',
         layout: false,
         name: 'login',
-        component: './User/Login',
+        component: './user/Login',
       },
       {
         path: '/user',
@@ -270,20 +270,28 @@
   },
   {
     path: '/system',
-    name: 'system',
     icon: 'setting',
-    access: 'canAdmin',
-    component: './system/user',
+    name: 'system',
     routes: [
       {
         path: '/system/user',
         name: 'user',
-        component: './system/user/',
+        component: './system/user',
+      },
+      {
+        path: '/system/role',
+        name: 'role',
+        component: './system/role',
       },
       {
         path: '/system/depart',
         name: 'depart',
-        component: './system/depart/',
+        component: './system/depart',
+      },
+      {
+        path: '/system/permission',
+        name: 'permission',
+        component: './system/permission',
       },
     ],
   },
