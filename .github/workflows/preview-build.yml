@@ -20,4 +20,17 @@ jobs:
       - name: Install dependencies
         run: yarn
       - run: yarn run build
-      - run: yarn run test
+      - run: mkdir disk && cp disk/* disk
+      - uses: actions/upload-artifact@v2
+        with:
+          name: antdv5
+          path: disk
+      - name: Deploy to Staging server
+        uses: easingthemes/ssh-deploy@main
+        env:
+          SSH_PRIVATE_KEY: ${{ secrets.SERVER_SSH_KEY }}
+          ARGS: "-rltgoDzvO"
+          SOURCE: "disk/"
+          REMOTE_HOST: ${{ secrets.REMOTE_HOST }}
+          REMOTE_USER: ${{ secrets.REMOTE_USER }}
+          TARGET: ${{ secrets.REMOTE_TARGET }}
