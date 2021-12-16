@@ -40,7 +40,7 @@ export default defineConfig({
           path: '/user/login',
           layout: false,
           name: 'login',
-          component: './User/Login',
+          component: './user/Login',
         },
         {
           path: '/user',
@@ -173,22 +173,22 @@ export default defineConfig({
         {
           path: '/system/user',
           name: 'user',
-          component: './system/user/',
+          component: './system/user',
         },
         {
           path: '/system/role',
           name: 'role',
-          component: './system/role/',
+          component: './system/role',
         },
         {
           path: '/system/depart',
           name: 'depart',
-          component: './system/depart/',
+          component: './system/depart',
         },
         {
           path: '/system/permission',
           name: 'permission',
-          component: './system/permission/',
+          component: './system/permission',
         },
       ],
     },
