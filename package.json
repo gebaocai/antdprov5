@@ -19,7 +19,6 @@
     "lint:prettier": "prettier -c --write \"src/**/*\" --end-of-line auto",
     "lint:style": "stylelint --fix \"src/**/*.less\" --syntax less",
     "openapi": "umi openapi",
-    "precommit": "lint-staged",
     "prettier": "prettier -c --write \"src/**/*\"",
     "start": "cross-env UMI_ENV=dev umi dev",
     "start:dev": "cross-env REACT_APP_ENV=dev MOCK=none UMI_ENV=dev umi dev",
@@ -48,7 +47,7 @@
   ],
   "dependencies": {
     "@ant-design/charts": "^0.9.4",
-    "@ant-design/icons": "^4.6.2",
+    "@ant-design/icons": "^4.7.0",
     "@ant-design/pro-card": "^1.14.8",
     "@ant-design/pro-descriptions": "^1.6.8",
     "@ant-design/pro-form": "^1.18.3",
@@ -122,6 +121,6 @@
     "node": ">=10.0.0"
   },
   "gitHooks": {
-    "commit-msg": "fabric verify-commit"
+    
   }
 }

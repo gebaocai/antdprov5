@@ -5,3 +5,8 @@ export interface RoleItem {
   name:string;
   desc?: string;
 }
+
+export interface RolePermissionItem {
+  roleId: string;
+  permissionId: string;
+}

@@ -8,7 +8,7 @@ import EditDepartPermissionForm  from './components/EditDepartPermissionForm';
 import EditDepartForm  from './components/EditDepartForm';
 import styles from './style.less';
 import {Input, Alert } from 'antd';
-import {DepartData} from './data.d';
+import {DepartData} from './data';
 import { FormInstance } from 'antd/es/form';
 
 
