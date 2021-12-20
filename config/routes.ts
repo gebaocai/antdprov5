@@ -65,21 +65,25 @@
       {
         path: '/system/user',
         name: 'user',
+        icon: 'smile',
         component: './system/user',
       },
       {
         path: '/system/role',
         name: 'role',
+        icon: 'smile',
         component: './system/role',
       },
       {
         path: '/system/depart',
         name: 'depart',
+        icon: 'smile',
         component: './system/depart',
       },
       {
         path: '/system/permission',
         name: 'permission',
+        icon: 'smile',
         component: './system/permission',
       },
     ],
