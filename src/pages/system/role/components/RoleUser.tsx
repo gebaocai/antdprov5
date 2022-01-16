@@ -141,7 +141,7 @@ const RoleUser: FC<RoleUserProps> = (props) => {
           <Spin spinning={userList?.loading}>
           <Table 
             rowSelection={{type:'checkbox'}}
-            dataSource={userList?.data?.records} 
+            dataSource={userList?.data} 
             columns={columns} />
           </Spin>
           <UserDrawer 

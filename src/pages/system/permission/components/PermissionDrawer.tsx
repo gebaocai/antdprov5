@@ -5,6 +5,7 @@ import { FormInstance } from 'antd/es/form';
 import { Callbacks, Store } from 'rc-field-form/lib/interface';
 import { ValidateStatus } from 'antd/lib/form/FormItem';
 import { DataNode } from 'rc-tree-select/lib/interface';
+import { SettingOutlined } from '@ant-design/icons';
 
 type PermissionDrawerProps = {
   loading: boolean;
@@ -147,7 +148,7 @@ const PermissionDrawer: React.FC<PermissionDrawerProps> = (props) => {
             label="菜单图标"
             name="icon"
             >
-            <Input disabled={readonly}/>
+            <Input disabled={readonly} suffix={<SettingOutlined /> }/>
             </Form.Item>
             <Form.Item
             label="排序"
