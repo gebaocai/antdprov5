@@ -25,15 +25,10 @@ const EditDepartPermissionForm: React.FC<EditFormProps> = (props) => {
 
   const [expandedKeys, setExpandedKeys] = useState<React.Key[]>([]);
   const [checkedKeys, setCheckedKeys] = useState<React.Key[]>(departPermission);
-  const [curDepartKey, setCurDepartKey] = useState<string>('');
 
-  useEffect(() => {
-    let keyStr = selectedKeys.length>0?selectedKeys[0]:'';
-    if (keyStr != curDepartKey) {
-      setCheckedKeys(departPermission);
-      setCurDepartKey(keyStr);
-    }
-  });
+  useEffect(()=>{
+    setCheckedKeys(departPermission);
+  }, [departPermission])
 
   // const [checkKeyStr, setCheckKeyStr] = useState<string>(checkedKeys.join());
   // const [selectedKeys2, setSelectedKeys] = useState<React.Key[]>([]);
@@ -91,14 +86,14 @@ const EditDepartPermissionForm: React.FC<EditFormProps> = (props) => {
   // formRef.current!.setFieldsValue({
   //   checkKeyStr: checkKeyStr
   // });
-  let checkKeyStr=checkedKeys.join();
+  let checkKeyStr = '';
   const onCheck = (checkedKeysValue: React.Key[]) => {
     console.log('onCheck', checkedKeysValue);
     setCheckedKeys(checkedKeysValue);
     // setCheckKeyStr(checkedKeysValue.join());
     console.log('checkKeyStr', checkedKeysValue.join());
     formRef.current!.setFieldsValue({
-      checkKeyStr: checkedKeysValue.join()
+      permissionIds: checkedKeysValue.join()
     });
   };
 
@@ -111,7 +106,7 @@ const EditDepartPermissionForm: React.FC<EditFormProps> = (props) => {
             ref={formRef}
             labelCol={labelCol}
             wrapperCol={wrapperCol}
-            initialValues={{ checkKeyStr: checkKeyStr }}
+            initialValues={{ permissionIds: checkKeyStr }}
             onFinish={onFinish}
             onFinishFailed={onFinishFailed}
           >
@@ -131,7 +126,7 @@ const EditDepartPermissionForm: React.FC<EditFormProps> = (props) => {
                 checkStrictly={false}
                 
               />
-            <Form.Item name="checkKeyStr" hidden>
+            <Form.Item name="permissionIds" hidden>
               <Input />
             </Form.Item>  
             <Form.Item wrapperCol={{offset: 8, span: 16}}>

@@ -2,7 +2,7 @@ import { useRequest } from 'umi';
 import React, { useState, useRef, useEffect } from 'react';
 import { Space, Row, Col, Tree, Tabs, Button, Card, Spin, message } from 'antd';
 import { depart, departList} from './service';
-import { permissionTree, departPermission, editDepart, addDepart} from './service';
+import { permissionTree, departPermission, editDepart, addDepart, editDepartPermission} from './service';
 import DepartModal  from './components/DepartModal';
 import EditDepartPermissionForm  from './components/EditDepartPermissionForm';
 import EditDepartForm  from './components/EditDepartForm';
@@ -54,7 +54,9 @@ const TableList: React.FC = () => {
 
     permissionListReq.run();
 
-    departPermissionReq.run();
+    departPermissionReq.run({
+      departId : info.node.id
+    },);
   };
 
   const onCheck = (checkedKeys: React.Key[], info: any) => {
@@ -70,7 +72,9 @@ const TableList: React.FC = () => {
   
       permissionListReq.run();
   
-      departPermissionReq.run();
+      departPermissionReq.run({
+        departId : info.node.id
+      },);
     } else {
       setSelectedKeys([]);
       setSelectedTitle(undefined);
@@ -96,7 +100,8 @@ const TableList: React.FC = () => {
 
   const onPermissionFinish = (values: any) => {
     console.log('Success:', values);
-    return true;
+    values.departId = selectedKeys[0];
+    editDepartPermissionReq.run(values);
   };
 
   const editDepartReq = useRequest(editDepart, {
@@ -132,6 +137,7 @@ const TableList: React.FC = () => {
   );
   const permissionListReq = useRequest(permissionTree, {manual: true});
   const departPermissionReq = useRequest(departPermission, {manual: true});
+  const editDepartPermissionReq = useRequest(editDepartPermission, {manual: true});
 
   return (
       <Row justify="space-between" gutter={[16, { xs: 8, sm: 16, md: 24, lg: 32 }]}>

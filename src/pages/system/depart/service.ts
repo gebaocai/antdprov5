@@ -62,9 +62,15 @@ export async function permissionTree(options?: { [key: string]: any }) {
   });
 }
 
-export async function departPermission(options?: { [key: string]: any }) {
-  return request<Record<string, any>>('/api/departPermission', {
+export async function departPermission(
+  params: {
+    departId: string;
+  },
+  options?: { [key: string]: any }) 
+  {
+  return request<Record<string, any>>('/api/sys/departPermission/list', {
     method: 'GET',
+    params,
     ...(options || {}),
   });
 }
@@ -82,6 +88,17 @@ export async function editDepart(body: DepartData, options?: { [key: string]: an
 
 export async function addDepart(body: any, options?: { [key: string]: any }) {
   return request<Record<string, any>>('/api/sys/sysDepart/add', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    data: body,
+    ...(options || {}),
+  });
+}
+
+export async function editDepartPermission(body: any, options?: { [key: string]: any }) {
+  return request<Record<string, any>>('/api/sys/departPermission/batchSave', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
