@@ -29,6 +29,12 @@ declare namespace API {
     data: TokenData;
   };
 
+  type UserPermission = {
+    code: number;
+    message: string;
+    data: any;
+  };
+
   
   type TokenData = {
     token: string;

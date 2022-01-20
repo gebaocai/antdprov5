@@ -6,9 +6,10 @@ import { history, Link, useModel } from 'umi';
 import { RequestOptionsInit } from 'umi-request';
 import RightContent from '@/components/RightContent';
 import Footer from '@/components/Footer';
-import { currentUser as queryCurrentUser } from './services/ant-design-pro/api';
+import { currentUser as queryCurrentUser, fetchMenuData } from './services/ant-design-pro/api';
 import { BookOutlined, LinkOutlined } from '@ant-design/icons';
 import { message } from 'antd';
+import fixMenuItemIcon from './utils/utils'
 // import TYPE from './pages/data';
 
 const isDev = process.env.NODE_ENV === 'development';
@@ -146,6 +147,19 @@ export const layout: RunTimeLayoutConfig = ({ initialState }) => {
         ]
       : [],
     menuHeaderRender: undefined,
+    menu: {
+      // 每当 initialState?.currentUser?.userid 发生修改时重新执行 request
+      params: {
+        userId: initialState?.currentUser?.userid,
+      },
+      request: async (params, defaultMenuData) => {
+        // initialState.currentUser 中包含了所有用户信息
+        const menuData = await fetchMenuData();
+        return menuData.data;
+      },
+    },
+    menuDataRender: (menuData) => fixMenuItemIcon(menuData),
+    // menuDataRender: {()=>fixMenuItemIcon()},
     // 自定义 403 页面
     // unAccessible: <div>unAccessible</div>,
     ...initialState?.settings,
