@@ -69,6 +69,12 @@
         component: './system/user',
       },
       {
+        path: '/system/interface',
+        name: 'interface',
+        icon: 'smile',
+        component: './system/interface',
+      },
+      {
         path: '/system/role',
         name: 'role',
         icon: 'smile',
