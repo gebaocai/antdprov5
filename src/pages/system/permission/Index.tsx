@@ -13,12 +13,13 @@ import { FormInstance } from 'antd/es/form';
 import styles from './style.less';
 import { request } from 'umi';
 import PermissionDrawer  from './components/PermissionDrawer';
+import PermissionApi  from './components/PermissionApi';
+import { permissionApiList, addPermissionApi, delPermissionApi } from './service';
 
 const TableList: React.FC = () => {
-
-  const {loading, data, refresh} = useRequest(permissionTree);
   const [visible, setVisible] = useState(false);
   const [readOnly, setReadOnly] = useState(false);
+  const [permissionApi, setPermissionApi] = useState(false);
   const [drawTitle, setDrawTitle] = useState("");
   const [record, setRecored] = useState();
 
@@ -30,24 +31,35 @@ const TableList: React.FC = () => {
     if (type == 1) {
       setDrawTitle("编辑")
       setReadOnly(false);
+      setVisible(true);
+      setPermissionApi(false);
     } else if (type == 2) {
       setDrawTitle("详情")
       setReadOnly(true);
-    } else {
+      setVisible(true);
+      setPermissionApi(false);
+    } else if (type == 3){
       setDrawTitle("添加下级")
       const xx:any = {menuType:1, parentId:record.id};
       console.log(xx);
       setRecored(xx);
       setReadOnly(false);
+      setVisible(true);
+      setPermissionApi(false);
+    } else {
+      setVisible(false);
+      setPermissionApi(true);
+      permissionApiListReq.run({"permissionId": record.id});
+    
     }
-    setVisible(true);
+    
   };
 
   const deleteRecord = (record:any) => {
     deletePermission(record).then(function(response) {
       console.log(response);
       setVisible(false);
-      refresh();
+      permissionTreeReq.refresh();
     })
     .catch(function(error) {
       console.log(error);
@@ -61,6 +73,10 @@ const TableList: React.FC = () => {
     console.log("set visible false")
     setVisible(false);
   };
+  const onClosePermissionApi = () => {
+    console.log("set visible false")
+    setPermissionApi(false);
+  };
   const handleAdd = () => {
     setRecored(undefined)
     setVisible(true);
@@ -73,7 +89,7 @@ const TableList: React.FC = () => {
       editPermission(values).then(function(response) {
         console.log(response);
         setVisible(false);
-        refresh();
+        permissionTreeReq.refresh();
       })
       .catch(function(error) {
         console.log(error);
@@ -85,7 +101,7 @@ const TableList: React.FC = () => {
       addPermission(values).then(function(response) {
         console.log(response);
         setVisible(false);
-        refresh();
+        permissionTreeReq.refresh();
       })
       .catch(function(error) {
         console.log(error);
@@ -149,7 +165,9 @@ const TableList: React.FC = () => {
       fixed: true,
       render: (_, record: { key: React.Key }) => (
         <Space size="middle">
-          <Button onClick={()=>showDrawer(record, 1)}>编辑</Button>
+          <a href="#" onClick={()=>showDrawer(record, 1)}>编辑</a>
+          <Divider type="vertical" />
+          <a href="#" onClick={()=>showDrawer(record, 4)}>API</a>
           <Divider type="vertical" />
           <Dropdown overlay={showMenu(record)}>
             <a className="ant-dropdown-link" onClick={e => e.preventDefault()}>
@@ -188,6 +206,9 @@ const TableList: React.FC = () => {
     return menu;
   }
   
+  const permissionApiListReq = useRequest(permissionApiList, {manual: true});
+  const permissionTreeReq = useRequest(permissionTree);
+
 
   return (
     <>
@@ -195,7 +216,7 @@ const TableList: React.FC = () => {
        <Button onClick={handleAdd} type="primary" shape="round" icon={<PlusOutlined />} style={{marginBottom: 20}}>新增</Button> 
        <Table<TableListItem> 
         columns={columns}
-        dataSource={data} 
+        dataSource={permissionTreeReq.data} 
         pagination={false} />
      </Card>
      <PermissionDrawer visible={visible} loading={saving} readonly={readOnly}
@@ -203,9 +224,12 @@ const TableList: React.FC = () => {
       onClose={onClose}
       title={drawTitle}
       record={record}
-      treeData={data}
-
+      treeData={permissionTreeReq.data}
        />
+     <PermissionApi hidden={permissionApi}
+      apiListReq={permissionApiListReq}
+      onClose={onClosePermissionApi}
+       />  
     </>
       
   );

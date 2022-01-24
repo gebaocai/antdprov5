@@ -61,3 +61,41 @@ export async function deletePermission(body: Permission, options?: { [key: strin
     ...(options || {}),
   });
 }
+
+
+export async function permissionApiList(
+  params: {
+    permissionId: string;
+  },
+  options?: { [key: string]: any }) {
+  return request<Record<string, any>>('/api/sys/permissionApi/list', {
+    method: 'GET',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    params,
+    ...(options || {}),
+  });
+}
+
+export async function addPermissionApi(body: Permission, options?: { [key: string]: any }) {
+  return request<Record<string, any>>('/api/sys/permissionApi/add', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    data: body,
+    ...(options || {}),
+  });
+}
+
+export async function delPermissionApi(body: Permission, options?: { [key: string]: any }) {
+  return request<Record<string, any>>('/api/sys/permissionApi/del', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    data: body,
+    ...(options || {}),
+  });
+}
