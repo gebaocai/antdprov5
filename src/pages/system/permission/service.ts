@@ -78,19 +78,19 @@ export async function permissionApiList(
   });
 }
 
-export async function addPermissionApi(body: Permission, options?: { [key: string]: any }) {
-  return request<Record<string, any>>('/api/sys/permissionApi/add', {
-    method: 'POST',
+export async function apiTreeList(
+  options?: { [key: string]: any }) {
+  return request<Record<string, any>>('/api/sys/api/queryTreeList', {
+    method: 'GET',
     headers: {
       'Content-Type': 'application/json',
     },
-    data: body,
     ...(options || {}),
   });
 }
 
-export async function delPermissionApi(body: Permission, options?: { [key: string]: any }) {
-  return request<Record<string, any>>('/api/sys/permissionApi/del', {
+export async function editPermissionApi(body: any, options?: { [key: string]: any }) {
+  return request<Record<string, any>>('/api/sys/permissionApi/batchSave', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',

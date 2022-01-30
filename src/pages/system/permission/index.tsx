@@ -14,7 +14,7 @@ import styles from './style.less';
 import { request } from 'umi';
 import PermissionDrawer  from './components/PermissionDrawer';
 import PermissionApi  from './components/PermissionApi';
-import { permissionApiList, addPermissionApi, delPermissionApi } from './service';
+import { permissionApiList, apiTreeList, editPermissionApi } from './service';
 
 const TableList: React.FC = () => {
   const [visible, setVisible] = useState(false);
@@ -49,6 +49,7 @@ const TableList: React.FC = () => {
     } else {
       setVisible(false);
       setPermissionApi(true);
+      apiTreeListReq.run();
       permissionApiListReq.run({"permissionId": record.id});
     
     }
@@ -77,6 +78,12 @@ const TableList: React.FC = () => {
     console.log("set visible false")
     setPermissionApi(false);
   };
+  const onPermissionApiFinish = (values: any) => {
+    console.log("onFinish " + values);
+    values.permissionId = record?.id;
+    editPermissionApiReq.run(values);
+  }
+
   const handleAdd = () => {
     setRecored(undefined)
     setVisible(true);
@@ -207,6 +214,8 @@ const TableList: React.FC = () => {
   }
   
   const permissionApiListReq = useRequest(permissionApiList, {manual: true});
+  const apiTreeListReq = useRequest(apiTreeList, {manual: true});
+  const editPermissionApiReq = useRequest(editPermissionApi, {manual: true});
   const permissionTreeReq = useRequest(permissionTree);
 
 
@@ -226,10 +235,15 @@ const TableList: React.FC = () => {
       record={record}
       treeData={permissionTreeReq.data}
        />
-     <PermissionApi hidden={permissionApi}
-      apiListReq={permissionApiListReq}
-      onClose={onClosePermissionApi}
-       />  
+
+      <PermissionApi 
+            hidden={permissionApi || permissionApiListReq.loading}
+            loading={permissionApiListReq.loading} 
+            apiList={apiTreeListReq.data}
+            permissionApi={permissionApiListReq.data}
+            onFinish={onPermissionApiFinish}
+            onClose={onClosePermissionApi}
+            />  
     </>
       
   );
