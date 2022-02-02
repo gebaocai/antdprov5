@@ -61,10 +61,40 @@ const ApiPage: FC = () => {
       render: (text:any, record: { key: React.Key }) => (
         <Space size="middle">
           <a href="#" onClick={()=>showApiModal(record, 2)}>编辑</a>
+          <Divider type="vertical" />
+          <Dropdown overlay={showMenu(record)}>
+            <a className="ant-dropdown-link" onClick={e => e.preventDefault()}>
+            更多 <DownOutlined />
+            </a>
+          </Dropdown>
         </Space>
       ),
     }
   ];
+
+  const showMenu = (record:React.ReactNode) => {
+    const menu = (
+      <Menu>
+        
+          <Menu.Item key="1" hidden={record?.menuType==2}>
+            <a href="javascript:;" onClick={()=>showApiModal(record, 3)}>添加下级</a>
+          </Menu.Item>
+          {record?.menuType!=2?<Menu.Divider />:null}
+        
+        <Menu.Item key="3" >
+          <Popconfirm
+            title="确定删除吗?"
+            onConfirm={()=>deleteRecord(record)}
+            okText="确定"
+            cancelText="取消"
+          >
+            <a href="#">删除</a>
+          </Popconfirm>
+        </Menu.Item>
+      </Menu>
+    );
+    return menu;
+  }
 
   const deleteRecord = (record:any) => {
 
@@ -99,6 +129,10 @@ const ApiPage: FC = () => {
     console.log("record is " + record)
     setChangeModalVisiable(true);
     setApi(record);
+    if (type == 1) {
+      setApi({menuType: 0});
+    }
+    apiApiMenuReq.run({fetchType:"menu"});
   }
 
   const addApiReq = useRequest(addApi, {manual: true,
@@ -108,6 +142,7 @@ const ApiPage: FC = () => {
     onSuccess : ()=>{message.success('编辑成功');apiListReq.refresh();onCancel();},
     onError : ()=>{message.success('编辑失败');},});
   const apiListReq = useRequest(queryTreeList);
+  const apiApiMenuReq = useRequest(queryTreeList, {manual: true});
 
   return (<>
       <Card bordered={false}>
@@ -125,6 +160,7 @@ const ApiPage: FC = () => {
       <InterfaceModal 
         modalVisible={changeModalVisiable}
         model={api}
+        treeData={apiApiMenuReq.data}
         onFinish={onFinish}
         onCancel={onCancel}
         />  

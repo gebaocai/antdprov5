@@ -41,12 +41,16 @@ export async function apiList(
 }
 
 export async function queryTreeList(
+  params: {
+    fetchType?: string;
+  },
   options?: { [key: string]: any }) {
   return request<Record<string, any>>('/api/sys/api/queryTreeList', {
     method: 'GET',
     headers: {
       'Content-Type': 'application/json',
     },
+    params,
     ...(options || {}),
   });
 }
