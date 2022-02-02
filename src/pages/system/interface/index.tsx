@@ -4,7 +4,7 @@ import { Table, Card, Space, Button, Col, Row} from 'antd';
 import { Divider, Menu, Dropdown, Popconfirm, Spin, message } from 'antd';
 import { DownOutlined, PlusOutlined} from '@ant-design/icons';
 
-import { addApi, editApi, apiList} from './service';
+import { addApi, editApi, queryTreeList} from './service';
 import InterfaceModal from './components/InterfaceModal';
 import styles from './style.less';
 
@@ -18,6 +18,22 @@ const ApiPage: FC = () => {
       dataIndex: 'name',
       key: 'name',
       align: 'center',
+    },
+    {
+      title: '菜单类型',
+      dataIndex: 'menuType',
+      key: 'menuType',
+      render: function(text) {
+        if (text == 0) {
+          return '菜单'
+        } else if (text == 1) {
+          return '菜单'
+        } else if (text == 2) {
+          return '接口'
+        } else {
+          return text
+        }
+      }
     },
     {
       title: '地址',
@@ -91,7 +107,7 @@ const ApiPage: FC = () => {
   const editApiReq = useRequest(editApi, {manual: true,
     onSuccess : ()=>{message.success('编辑成功');apiListReq.refresh();onCancel();},
     onError : ()=>{message.success('编辑失败');},});
-  const apiListReq = useRequest(apiList);
+  const apiListReq = useRequest(queryTreeList);
 
   return (<>
       <Card bordered={false}>
@@ -100,17 +116,9 @@ const ApiPage: FC = () => {
         </Space>
         <Spin spinning={apiListReq.loading}>
         <Table 
-          rowSelection={{type:'checkbox'}}
-          dataSource={apiListReq.data?.records}
-          pagination={{current:apiListReq.data?.current, 
-            defaultCurrent:1, 
-            total:apiListReq.data?.total,
-            showTotal:(total, range)=> `${range[0]}-${range[1]} of ${total} items`
-              }}
-          onChange={onChangePage}
-          columns={columns} 
-          rowKey={record=>record.id} />
-          
+          dataSource={apiListReq.data}
+          pagination={false}
+          columns={columns} />
         </Spin>  
       </Card>
       

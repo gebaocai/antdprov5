@@ -39,3 +39,14 @@ export async function apiList(
     ...(options || {}),
   });
 }
+
+export async function queryTreeList(
+  options?: { [key: string]: any }) {
+  return request<Record<string, any>>('/api/sys/api/queryTreeList', {
+    method: 'GET',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    ...(options || {}),
+  });
+}
