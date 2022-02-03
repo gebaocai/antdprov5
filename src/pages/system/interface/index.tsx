@@ -11,6 +11,7 @@ import styles from './style.less';
 const ApiPage: FC = () => {
   const [changeModalVisiable, setChangeModalVisiable] = useState(false);
   const [api, setApi] = useState();
+  const [modalTitle, setModalTitle] = useState("新增");
   
   const columns = [
     {
@@ -116,11 +117,6 @@ const ApiPage: FC = () => {
   }
   
 
-  const onChangePage = (pagination, filters, sorter) => {
-    // console.log("page pageSize" + page+" "+ pageSize)
-    apiListReq.run({pageNo:pagination.current, pageSize:pagination.pageSize});
-  }
-
   // function showTotal(total:number) {
   //   return `Total ${total} items`;
   // }
@@ -131,6 +127,12 @@ const ApiPage: FC = () => {
     setApi(record);
     if (type == 1) {
       setApi({menuType: 0});
+    } else if (type == 2) {
+      setModalTitle("编辑");
+    } else if (type == 3) {
+      setModalTitle("添加下");
+      const xx:any = {parentId:record.id};
+      setApi(xx);
     }
     apiApiMenuReq.run({fetchType:"menu"});
   }
@@ -158,6 +160,8 @@ const ApiPage: FC = () => {
       </Card>
       
       <InterfaceModal 
+        title={modalTitle}
+        loading={apiApiMenuReq.loading}
         modalVisible={changeModalVisiable}
         model={api}
         treeData={apiApiMenuReq.data}

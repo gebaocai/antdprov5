@@ -37,6 +37,9 @@ const PermissionDrawer: React.FC<PermissionDrawerProps> = (props) => {
   const [menuType, setMenuType] = useState(record?.menuType);
 //   formRef?.current?.setFieldsValue(record)
   
+  useEffect(() => {
+    setMenuType(record?.menuType);
+  }, [visible]);
 
   const onTreeChange = (value: 	string | string[]) => {
     formRef?.current?.setFieldsValue({"parentId": value})
