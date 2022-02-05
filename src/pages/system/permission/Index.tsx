@@ -1,7 +1,7 @@
 import { useRequest } from 'umi';
 import React, { useState } from 'react';
-import { Space, Row, Col, Tree, Tabs, Button, Card, Popconfirm, Spin, message } from 'antd';
-import { permissionTree, editPermission, addPermission, deletePermission} from './service';
+import { Space, Row, Col, Tree, Tabs, Button, Card, Popconfirm, Spin, message, Modal } from 'antd';
+import { permissionTree, editPermission, addPermission, deletePermission, deleteForcePermission} from './service';
 import {TableListItem} from './data';
 
 import { Table, Divider, Menu, Dropdown, TreeSelect } from 'antd';
@@ -15,6 +15,7 @@ import { request } from 'umi';
 import PermissionDrawer  from './components/PermissionDrawer';
 import PermissionApi  from './components/PermissionApi';
 import { permissionApiList, apiTreeList, editPermissionApi } from './service';
+const { confirm } = Modal;
 
 const TableList: React.FC = () => {
   const [visible, setVisible] = useState(false);
@@ -57,17 +58,7 @@ const TableList: React.FC = () => {
   };
 
   const deleteRecord = (record:any) => {
-    deletePermission(record).then(function(response) {
-      console.log(response);
-      setVisible(false);
-      permissionTreeReq.refresh();
-    })
-    .catch(function(error) {
-      console.log(error);
-    })
-    .finally(()=>
-      setSaving(false)
-    );
+    deletePermissionReq.run(record);
   };
 
   const onClose = () => {
@@ -219,7 +210,28 @@ const TableList: React.FC = () => {
     onSuccess : ()=>{message.success('编辑成功');},
     onError : ()=>{message.success('编辑失败');},});
   const permissionTreeReq = useRequest(permissionTree);
-
+  const deletePermissionReq = useRequest(deletePermission, {manual: true,
+    onSuccess : (data:any, params: any[])=>
+    {
+      console.log(data);
+      if (data?.hasChildren) {
+          confirm({
+            title: '该项有子项，确定删除吗?',
+            content: '该项有子项， 确定后将同时删除所有子项?',
+            onOk() {
+              deleteForcePermissionReq.run(params[0]);
+            },
+            onCancel() {
+              console.log('Cancel');
+            },
+          }); 
+      } else {
+      message.success('删除成功');
+      permissionTreeReq.refresh();}},
+    onError : ()=>{message.success('删除失败');},});
+  const deleteForcePermissionReq = useRequest(deleteForcePermission, {manual: true,
+    onSuccess : ()=>{message.success('编辑成功');permissionTreeReq.refresh();},
+    onError : ()=>{message.success('编辑失败');},});  
 
   return (
     <>

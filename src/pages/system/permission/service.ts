@@ -62,6 +62,17 @@ export async function deletePermission(body: Permission, options?: { [key: strin
   });
 }
 
+export async function deleteForcePermission(body: Permission, options?: { [key: string]: any }) {
+  return request<Record<string, any>>('/api/sys/permission/deleteForce', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    data: body,
+    ...(options || {}),
+  });
+}
+
 
 export async function permissionApiList(
   params: {
