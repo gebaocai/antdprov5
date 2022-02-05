@@ -24,18 +24,24 @@ export async function editApi(body: any, options?: { [key: string]: any }) {
   });
 }
 
-export async function apiList(
-  params: {
-    pageNo?: number;
-    pageSize?: number;
-  },
-  options?: { [key: string]: any }) {
-  return request<Record<string, any>>('/api/sys/api/list', {
-    method: 'GET',
+export async function deleteApi(body: any, options?: { [key: string]: any }) {
+  return request<Record<string, any>>('/api/sys/api/delete', {
+    method: 'POST',
     headers: {
       'Content-Type': 'application/json',
     },
-    params,
+    data: body,
+    ...(options || {}),
+  });
+}
+
+export async function deleteForceApi(body: any, options?: { [key: string]: any }) {
+  return request<Record<string, any>>('/api/sys/api/deleteForce', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    data: body,
     ...(options || {}),
   });
 }

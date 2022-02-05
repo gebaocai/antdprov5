@@ -1,12 +1,13 @@
 import { useRequest } from 'umi';
 import React, { FC, useState } from 'react';
-import { Table, Card, Space, Button, Col, Row} from 'antd';
+import { Table, Card, Space, Button, Modal, Col, Row} from 'antd';
 import { Divider, Menu, Dropdown, Popconfirm, Spin, message } from 'antd';
 import { DownOutlined, PlusOutlined} from '@ant-design/icons';
 
-import { addApi, editApi, queryTreeList} from './service';
+import { addApi, editApi, deleteApi, deleteForceApi, queryTreeList} from './service';
 import InterfaceModal from './components/InterfaceModal';
 import styles from './style.less';
+const { confirm } = Modal;
 
 const ApiPage: FC = () => {
   const [changeModalVisiable, setChangeModalVisiable] = useState(false);
@@ -40,6 +41,12 @@ const ApiPage: FC = () => {
       title: '地址',
       dataIndex: 'url',
       key: 'url',
+      align: 'center',
+    },
+    {
+      title: '排序',
+      dataIndex: 'sortNo',
+      key: 'sortNo',
       align: 'center',
     },
     {
@@ -98,7 +105,7 @@ const ApiPage: FC = () => {
   }
 
   const deleteRecord = (record:any) => {
-
+    deleteApiReq.run(record);
   }
 
   const onFinish = (values: any) => {
@@ -126,12 +133,13 @@ const ApiPage: FC = () => {
     setChangeModalVisiable(true);
     setApi(record);
     if (type == 1) {
+      setModalTitle("新增");
       setApi({menuType: 0});
     } else if (type == 2) {
       setModalTitle("编辑");
     } else if (type == 3) {
-      setModalTitle("添加下");
-      const xx:any = {parentId:record.id};
+      setModalTitle("添加下级");
+      const xx:any = {menuType: 2, parentId:record.id};
       setApi(xx);
     }
     apiApiMenuReq.run({fetchType:"menu"});
@@ -143,6 +151,28 @@ const ApiPage: FC = () => {
   const editApiReq = useRequest(editApi, {manual: true,
     onSuccess : ()=>{message.success('编辑成功');apiListReq.refresh();onCancel();},
     onError : ()=>{message.success('编辑失败');},});
+  const deleteForceApiReq = useRequest(deleteForceApi, {manual: true,
+    onSuccess : ()=>{message.success('编辑成功');apiListReq.refresh();onCancel();},
+    onError : ()=>{message.success('编辑失败');},});  
+  const deleteApiReq = useRequest(deleteApi, {manual: true,
+    onSuccess : (data:any, params: any[])=>
+    {
+      console.log(data);
+      if (data?.hasChildren) {
+          confirm({
+            title: '该项有子项，确定删除吗?',
+            content: '该项有子项， 确定后将同时删除所有子项?',
+            onOk() {
+              deleteForceApiReq.run(params[0]);
+            },
+            onCancel() {
+              console.log('Cancel');
+            },
+          }); 
+      } else {
+      message.success('删除成功');
+    apiListReq.refresh();onCancel();}},
+    onError : ()=>{message.success('删除失败');},});
   const apiListReq = useRequest(queryTreeList);
   const apiApiMenuReq = useRequest(queryTreeList, {manual: true});
 

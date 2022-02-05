@@ -92,7 +92,7 @@ const ChangePasswordModal: React.FC<CreateFormProps> = (props) => {
               <Input />
           </Form.Item>
           <Form.Item
-                  hidden={menuType==0}
+                  hidden={menuType==0 && !model?.parentId}
                   label="上级菜单"
                   name="parentId"
                   // help={'请选择上级菜单!'}
@@ -124,6 +124,12 @@ const ChangePasswordModal: React.FC<CreateFormProps> = (props) => {
               >
               <Input />
           </Form.Item>
+          <Form.Item
+            label="排序"
+            name="sortNo"
+            >
+            <Input />
+            </Form.Item>
           <Form.Item wrapperCol={{offset: 20, span: 4}} >
             <Button type="primary" htmlType="submit">
               提交

@@ -70,7 +70,16 @@ const codeMessage = {
   504: '网关超时。',
 };
 
-const errorHandler = (error: { response: Response }): Response => {
+const errorHandler = (error: { name: string, data: any, info: any, response: Response }): Response => {
+
+  if (error.name === "BizError") {
+    notification.error({
+      message: `请求错误 ${error.info.errorCode}`,
+      description: error.info.errorMessage,
+    });
+    return error.info.errorCode;
+  }
+
   const { response } = error;
   if (response && response.status) {
     const errorText = codeMessage[response.status] || response.statusText;
@@ -112,6 +121,17 @@ const tokenCheckInterceptor = async (response: Response, options: RequestOptions
 
 export const request: RequestConfig = {
   errorHandler,
+  errorConfig: {
+    adaptor: (res:any) => {
+      return {
+        success: res.code === 200,
+        data: res.data,
+        errorCode: res.code,
+        errorMessage: res.message,
+        showType: 4,
+      };
+    },
+  },
   // 新增自动添加AccessToken的请求前拦截器
   requestInterceptors: [authHeaderInterceptor],
   responseInterceptors: [tokenCheckInterceptor],

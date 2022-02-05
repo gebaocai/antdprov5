@@ -42,6 +42,9 @@ export default {
     //   return;
     // }
     res.send({
+      code: 200,
+      message: "",
+      data: {
       name: 'Serati Ma',
       avatar: 'https://gw.alipayobjects.com/zos/antfincdn/XAosXuNZyF/BiazfanxmamNRoxxVxka.png',
       userid: '00000001',
@@ -91,7 +94,8 @@ export default {
       },
       address: '西湖区工专路 77 号',
       phone: '0752-268888888',
-    });
+    }
+  });
   },
   // GET POST 可省略
   'GET /api/users': [

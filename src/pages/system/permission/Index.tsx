@@ -215,7 +215,9 @@ const TableList: React.FC = () => {
   
   const permissionApiListReq = useRequest(permissionApiList, {manual: true});
   const apiTreeListReq = useRequest(apiTreeList, {manual: true});
-  const editPermissionApiReq = useRequest(editPermissionApi, {manual: true});
+  const editPermissionApiReq = useRequest(editPermissionApi, {manual: true,
+    onSuccess : ()=>{message.success('编辑成功');},
+    onError : ()=>{message.success('编辑失败');},});
   const permissionTreeReq = useRequest(permissionTree);
 
 
