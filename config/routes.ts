@@ -96,7 +96,7 @@
   },
   {
     path: '/',
-    redirect: '/welcome',
+    redirect: '/index',
   },
   {
     component: '404',

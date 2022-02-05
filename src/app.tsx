@@ -31,7 +31,7 @@ export async function getInitialState(): Promise<{
   const fetchUserInfo = async () => {
     try {
       const currentUser = await queryCurrentUser();
-      return currentUser;
+      return currentUser.data;
     } catch (error) {
       history.push(loginPath);
     }
@@ -144,7 +144,7 @@ export const layout: RunTimeLayoutConfig = ({ initialState }) => {
     rightContentRender: () => <RightContent />,
     disableContentMargin: false,
     waterMarkProps: {
-      content: initialState?.currentUser?.name,
+      content: initialState?.currentUser?.nickname,
     },
     footerRender: () => <Footer />,
     onPageChange: () => {
@@ -174,8 +174,9 @@ export const layout: RunTimeLayoutConfig = ({ initialState }) => {
       },
       request: async (params, defaultMenuData) => {
         // initialState.currentUser 中包含了所有用户信息
-        const menuData = await fetchMenuData();
-        return menuData.data;
+        // const menuData = await fetchMenuData();
+        // return menuData.data;
+        return initialState.currentUser.menuData;
       },
     },
     menuDataRender: (menuData) => fixMenuItemIcon(menuData),
