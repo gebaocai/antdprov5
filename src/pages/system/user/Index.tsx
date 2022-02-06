@@ -1,4 +1,4 @@
-import { useRequest } from 'umi';
+import { useRequest,useModel } from 'umi';
 import React, { FC, useState } from 'react';
 import { Table, Card, Space, Button, Col, Row} from 'antd';
 import { Divider, Menu, Dropdown, Popconfirm, Spin, message } from 'antd';
@@ -15,6 +15,7 @@ const UserPage: FC = () => {
   const [userDrawerVisiable, setUserDrawerVisiable] = useState(false);
   const [changePWVisiable, setChangePWVisiable] = useState(false);
   const [user, setUser] = useState();
+  const { initialState } = useModel('@@initialState');
   
   const columns = [
     {
@@ -216,7 +217,7 @@ const UserPage: FC = () => {
   return (<>
       <Card bordered={false}>
         <Space align="center">
-        <Button onClick={()=>showUserDrawer(null, 1)} type="primary" shape="round" icon={<PlusOutlined />} style={{marginBottom: 20}}>新增</Button> 
+        <Button disabled={!(initialState?.perms?.includes('user:add'))} onClick={()=>showUserDrawer(null, 1)} type="primary" shape="round" icon={<PlusOutlined />} style={{marginBottom: 20}}>新增</Button> 
         </Space>
         <Spin spinning={userListReq.loading}>
         <Table 

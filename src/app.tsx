@@ -26,6 +26,8 @@ export const initialStateConfig = {
 export async function getInitialState(): Promise<{
   settings?: Partial<LayoutSettings>;
   currentUser?: API.CurrentUser;
+  menuData?: [];
+  perms?: [];
   fetchUserInfo?: () => Promise<API.CurrentUser | undefined>;
 }> {
   const fetchUserInfo = async () => {
@@ -40,9 +42,13 @@ export async function getInitialState(): Promise<{
   // 如果是登录页面，不执行
   if (history.location.pathname !== loginPath) {
     const currentUser = await fetchUserInfo();
+    const menuData = currentUser.permissionData.menuData;
+    const perms = currentUser.permissionData.perms;
     return {
       fetchUserInfo,
       currentUser,
+      menuData,
+      perms,
       settings: {},
     };
   }
@@ -169,14 +175,15 @@ export const layout: RunTimeLayoutConfig = ({ initialState }) => {
     menuHeaderRender: undefined,
     menu: {
       // 每当 initialState?.currentUser?.userid 发生修改时重新执行 request
-      params: {
-        userId: initialState?.currentUser?.userid,
-      },
+      // params: {
+      //   userId: initialState?.currentUser?.userid,
+      // },
+      params :initialState,
       request: async (params, defaultMenuData) => {
         // initialState.currentUser 中包含了所有用户信息
         // const menuData = await fetchMenuData();
         // return menuData.data;
-        return initialState.currentUser.menuData;
+        return initialState?.menuData;
       },
     },
     menuDataRender: (menuData) => fixMenuItemIcon(menuData),
