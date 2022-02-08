@@ -23,6 +23,20 @@ export async function rolePermission(
   });
 }
 
+
+export async function roleDataScope(
+  params: {
+    roleId: string;
+  },
+  options?: { [key: string]: any },
+) {
+  return request<Record<string, any>>('/api/sys-role-data-scope/list', {
+    method: 'GET',
+    params,
+    ...(options || {}),
+  });
+}
+
 export async function addRole(body: RoleItem, options?: { [key: string]: any }) {
   return request<Record<string, any>>('/api/sys/role/save', {
     method: 'POST',

@@ -7,15 +7,19 @@ import { DownOutlined, PlusOutlined, CloseCircleOutlined} from '@ant-design/icon
 import RoleModal from './components/RoleModal';
 import RoleUser from './components/RoleUser';
 import RolePermission from './components/RolePermission';
+import RoleDataScope from './components/RoleDataScope';
 import { RoleItem } from './data';
 import { permissionTree, rolePermission, roleList, addRole, editRole, editRolePermission} from './service';
-import { userList} from './service';
-import { editDepart } from '../depart/service';
+import { userList, roleDataScope } from './service';
+import { departList } from '../service';
 
 const RolePage: FC = () => {
   const [roleModalVisiable, setRoleModalVisiable] = useState(false);
   const [leftCardVisiable, setLeftCardVisiable] = useState(false);
   const [showRoleUser, setShowRoleUser] = useState(false);
+  const [showRolePermission, setShowRolePermission] = useState(false);
+  const [showRoleDataScope, setShowRoleDataScope] = useState(false);
+  const [title, setTitle] = useState("");
   const [rightCardSpan, setRightCardSpan] = useState(24);
   const [model, setModel] = useState<RoleItem>();
   
@@ -47,8 +51,6 @@ const RolePage: FC = () => {
         <Space size="middle">
           <a href="#" onClick={()=>showCard(record, 1)}>用户</a>
           <Divider type="vertical" />
-          <a href="#" onClick={()=>showCard(record, 2)}>授权</a>
-          <Divider type="vertical" />
           <Dropdown overlay={showMenu(record)}>
             <a className="ant-dropdown-link" onClick={e => e.preventDefault()}>
             更多 <DownOutlined />
@@ -64,6 +66,12 @@ const RolePage: FC = () => {
       <Menu>
         <Menu.Item key="0">
           <a href="#" onClick={()=>showRoleModal(record, 2)}>编辑</a>
+        </Menu.Item>
+        <Menu.Item key="1">
+        <a href="#" onClick={()=>showCard(record, 2)}>授权菜单</a>
+        </Menu.Item>
+        <Menu.Item key="2">
+        <a href="#" onClick={()=>showCard(record, 3)}>授权数据</a>
         </Menu.Item>
         <Menu.Divider />
         <Menu.Item key="3" >
@@ -85,15 +93,24 @@ const RolePage: FC = () => {
     setModel(record);
     setLeftCardVisiable(true);
     setRightCardSpan(12);
+    setShowRoleUser(false);
+    setShowRolePermission(false);
+    setShowRoleDataScope(false);
     if (type == 1) {
+      setTitle("用户列表");
       setShowRoleUser(true);
       userListReq.run({roleId:record.id});
-    } else {
-      
-      setShowRoleUser(false);
+    } else if (type == 2){
+      setTitle("授权菜单");
+      setShowRolePermission(true);
       permissionListReq.run();
       rolePermissionReq.run({roleId:record.id});
       // rolePermissionReq.run({roleId:'123'});
+    } else if (type == 3) {
+      setTitle("授权数据");
+      setShowRoleDataScope(true)
+      listDepart.run();
+      roleDataScopeReq.run({roleId:record.id});
     }
   }
 
@@ -136,15 +153,6 @@ const RolePage: FC = () => {
     roleListReq.run({pageNo:pagination.current, pageSize:pagination.pageSize});
   }
 
-  const onRoleUserChangePage = (pagination, filters, sorter) => {
-    // console.log("page pageSize" + page+" "+ pageSize)
-    userListReq.run({pageNo:pagination.current, pageSize:pagination.pageSize});
-  }
-
-  // function showTotal(total:number) {
-  //   return `Total ${total} items`;
-  // }
-
   const permissionListReq = useRequest(permissionTree, {manual: true});
   const rolePermissionReq = useRequest(rolePermission, {manual: true});
   const userListReq = useRequest(userList, {manual: true});
@@ -159,7 +167,10 @@ const RolePage: FC = () => {
   const editRolePermissionReq = useRequest(editRolePermission, {manual: true,
     onSuccess : ()=>{message.success('编辑成功');roleListReq.refresh();onCancel();},
     onError : ()=>{message.success('编辑失败');},});
-
+  
+  const listDepart = useRequest(departList, {manual: true});
+  const roleDataScopeReq = useRequest(roleDataScope, {manual: true});
+  
   return (<>
     <Row gutter={16}>
       <Col span={rightCardSpan}> 
@@ -190,17 +201,23 @@ const RolePage: FC = () => {
           onCancel={onCancel} />
       </Col>
       <Col span={12}> 
-        <Card bordered={false} hidden={!leftCardVisiable} extra={<CloseCircleOutlined onClick={onCloseCard}/> }>
+        <Card title={title} bordered={false} hidden={!leftCardVisiable} extra={<CloseCircleOutlined onClick={onCloseCard}/> }>
           <RoleUser 
             hidden={!showRoleUser} 
             userList={userListReq}></RoleUser>
           <RolePermission 
-            hidden={showRoleUser||rolePermissionReq.loading}
+            hidden={!showRolePermission||rolePermissionReq.loading}
             loading={permissionListReq.loading} 
             rolePermission={rolePermissionReq.data}
             permissionList={permissionListReq.data}
             onFinish={onPermissionFinish}
             />
+          <RoleDataScope 
+            hidden={!showRoleDataScope||listDepart.loading}
+            loading={listDepart.loading || roleDataScopeReq.loading}
+            listDepart={listDepart.data}
+            roleDataScope={roleDataScopeReq.data}
+            />  
         </Card>
       </Col>  
     </Row>
