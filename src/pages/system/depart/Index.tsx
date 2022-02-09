@@ -183,14 +183,14 @@ const TableList: React.FC = () => {
                 model={detailDepart.data} 
                 onFinish={onFinish}/>
             </TabPane>
-            <TabPane tab="部门权限" key="2">
+            {/* <TabPane tab="部门权限" key="2">
               <EditDepartPermissionForm selectedKeys={selectedKeys} 
                 loading={permissionListReq.loading} 
                 permissionList={permissionListReq.data} 
                 departPermission={departPermissionReq.data} 
                 onFinish={onPermissionFinish}/>
         
-            </TabPane>
+            </TabPane> */}
           </Tabs>
         </Col>
         <DepartModal modalVisible={createFormVisable} selectedTitle={selectedTitle} onCancel={onCancle} onFinish={onCreateFinish} title="新增" />
