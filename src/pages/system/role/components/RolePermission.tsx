@@ -21,7 +21,6 @@ const RolePermission: FC<RolePermissionProps> = (props) => {
   const [autoExpandParent, setAutoExpandParent] = useState<boolean>(true);
 
   // let checkKeyStr=checkedKeys.join();
-  let checkKeyStr = '';
   const labelCol = { // 24格栅格系统，label所占为 a
     xxl: 5, // ≥1600px 响应式栅格
     xl: 8, // ≥1200px 响应式栅格
@@ -55,6 +54,7 @@ const RolePermission: FC<RolePermissionProps> = (props) => {
 
   useEffect(()=>{
     setCheckedKeys(rolePermission);
+    formRef.current!.setFieldsValue({ permissionIds: rolePermission });
   }, [rolePermission])
 
   const formRef = React.createRef<FormInstance>();
@@ -66,7 +66,6 @@ const RolePermission: FC<RolePermissionProps> = (props) => {
               ref={formRef}
               labelCol={labelCol}
               wrapperCol={wrapperCol}
-              initialValues={{ permissionIds: checkKeyStr}}
               onFinish={onFinish}
             >
               

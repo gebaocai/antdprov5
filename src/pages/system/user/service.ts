@@ -72,3 +72,27 @@ export async function userRoleList(
     ...(options || {}),
   });
 }
+
+export async function userDataScope(
+  params: {
+    userId: string;
+  },
+  options?: { [key: string]: any },
+) {
+  return request<Record<string, any>>('/api/sys-user-data-scope/list', {
+    method: 'GET',
+    params,
+    ...(options || {}),
+  });
+}
+
+export async function saveUserDataScope(body:any, options?: { [key: string]: any }) {
+  return request<Record<string, any>>('/api/sys-user-data-scope/batchSave', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    data: body,
+    ...(options || {}),
+  });
+}

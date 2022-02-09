@@ -10,7 +10,7 @@ import RolePermission from './components/RolePermission';
 import RoleDataScope from './components/RoleDataScope';
 import { RoleItem } from './data';
 import { permissionTree, rolePermission, roleList, addRole, editRole, editRolePermission} from './service';
-import { userList, roleDataScope } from './service';
+import { userList, roleDataScope, saveRoleDataScope } from './service';
 import { departList } from '../service';
 
 const RolePage: FC = () => {
@@ -125,9 +125,15 @@ const RolePage: FC = () => {
   }
 
   const onPermissionFinish = (values: any) => {
-    console.log("onFinish " + values);
+    console.log("onPermissionFinish " + values);
     values.roleId = model?.id;
     editRolePermissionReq.run(values);
+  }
+
+  const onDataScopeFinish = (values: any) => {
+    console.log("onDataScopeFinish " + values);
+    values.roleId = model?.id;
+    saveRoleDataScopeReq.run(values);
   }
 
   const onCancel = () => {
@@ -165,6 +171,10 @@ const RolePage: FC = () => {
   const roleListReq = useRequest(roleList);
 
   const editRolePermissionReq = useRequest(editRolePermission, {manual: true,
+    onSuccess : ()=>{message.success('编辑成功');roleListReq.refresh();onCancel();},
+    onError : ()=>{message.success('编辑失败');},});
+
+  const saveRoleDataScopeReq = useRequest(saveRoleDataScope, {manual: true,
     onSuccess : ()=>{message.success('编辑成功');roleListReq.refresh();onCancel();},
     onError : ()=>{message.success('编辑失败');},});
   
@@ -217,6 +227,7 @@ const RolePage: FC = () => {
             loading={listDepart.loading || roleDataScopeReq.loading}
             listDepart={listDepart.data}
             roleDataScope={roleDataScopeReq.data}
+            onFinish={onDataScopeFinish}
             />  
         </Card>
       </Col>  

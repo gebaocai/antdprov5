@@ -6,14 +6,16 @@ import { DownOutlined, PlusOutlined} from '@ant-design/icons';
 
 import { UserItem } from './data';
 import { userList, addUser, editUser, roleList, departList, userRoleList, changePassword} from '../service';
+import { userDataScope, saveUserDataScope} from './service';
 import UserDrawer from './components/UserDrawer';
 import ChangePasswordModal from './components/ChangePasswordModal';
+import UserDataScopeModal from './components/UserDataScopeModal';
 import styles from './style.less';
-import { editRole } from '../role/service';
 
 const UserPage: FC = () => {
   const [userDrawerVisiable, setUserDrawerVisiable] = useState(false);
   const [changePWVisiable, setChangePWVisiable] = useState(false);
+  const [dataScopeVisiable, setDataScopeVisiable] = useState(false);
   const [user, setUser] = useState();
   const { initialState } = useModel('@@initialState');
   
@@ -120,6 +122,9 @@ const UserPage: FC = () => {
           <a href="#" onClick={()=>showUserDrawer(record, 2)}>编辑</a>
         </Menu.Item>
         <Menu.Item key="1">
+          <a href="#" onClick={()=>showDataScope(record, 2)}>授权数据</a>
+        </Menu.Item>
+        <Menu.Item key="2">
           <a href="#" onClick={()=>showChangePW(record, 2)}>修改密码</a>
         </Menu.Item>
         <Menu.Divider />
@@ -177,6 +182,25 @@ const UserPage: FC = () => {
     setUser(record)
   }
 
+
+  const onDataScopeFinish = (values: any) => {
+    values.userId = user?.id;
+    saveUserDataScopeReq.run(values);
+  }
+
+  const onDataScopeCancel = () => {
+    console.log("onCancel")
+    setDataScopeVisiable(false);
+  }
+  
+  const showDataScope = (record:any, type: number) => {
+    setDataScopeVisiable(true)
+    setUser(record)
+    userDataScopeReq.run({userId: record.id})
+    listDepart.run();
+  }
+
+
   const showUserDrawer = (record:any, type: number) => {
     console.log("typeis " + type)
     console.log("record " + record);
@@ -213,6 +237,10 @@ const UserPage: FC = () => {
   const listRole = useRequest(roleList, {manual: true});
   const listDepart = useRequest(departList, {manual: true});
   const userRoleListReq = useRequest(userRoleList, {manual: true});
+  const userDataScopeReq = useRequest(userDataScope, {manual: true});
+  const saveUserDataScopeReq = useRequest(saveUserDataScope, {manual: true,
+    onSuccess : ()=>{message.success('编辑成功');setDataScopeVisiable(false)},
+    onError : ()=>{message.success('编辑失败');},}); 
 
   return (<>
       <Card bordered={false}>
@@ -250,6 +278,14 @@ const UserPage: FC = () => {
         onFinish={onChangePWFinish}
         onCancel={onChangePWCancel}
         />  
+      <UserDataScopeModal 
+        show={dataScopeVisiable}
+        loading={listDepart.loading||userDataScopeReq.loading}
+        listDepart={listDepart.data}
+        userDataScope={userDataScopeReq.data}
+        onFinish={onDataScopeFinish}
+        onCancel={onDataScopeCancel}
+        />    
     </>
 
   );

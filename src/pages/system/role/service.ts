@@ -86,6 +86,17 @@ export async function editRolePermission(body:RolePermissionItem, options?: { [k
   });
 }
 
+export async function saveRoleDataScope(body:any, options?: { [key: string]: any }) {
+  return request<Record<string, any>>('/api/sys-role-data-scope/batchSave', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    data: body,
+    ...(options || {}),
+  });
+}
+
 export async function userList(
   params: {
     roleId: string;
