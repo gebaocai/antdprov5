@@ -6,6 +6,7 @@ import { Callbacks, Store } from 'rc-field-form/lib/interface';
 import { ValidateStatus } from 'antd/lib/form/FormItem';
 import { DataNode } from 'rc-tree-select/lib/interface';
 import { SettingOutlined } from '@ant-design/icons';
+import IconModal  from './IconModal';
 
 type PermissionDrawerProps = {
   loading: boolean;
@@ -62,6 +63,10 @@ const PermissionDrawer: React.FC<PermissionDrawerProps> = (props) => {
     }
     console.log("curMenuType is "+curMenuType);
     console.log("menuType is "+menuType);
+  }
+
+  const openIconChoose = () => {
+    
   }
 
   
@@ -151,7 +156,7 @@ const PermissionDrawer: React.FC<PermissionDrawerProps> = (props) => {
             label="菜单图标"
             name="icon"
             >
-            <Input disabled={readonly} suffix={<SettingOutlined /> }/>
+            <Input disabled={readonly} suffix={<SettingOutlined onClick={openIconChoose}/>}/>
             </Form.Item>
             <Form.Item
             label="排序"
@@ -193,6 +198,8 @@ const PermissionDrawer: React.FC<PermissionDrawerProps> = (props) => {
         </Form>
         </Card>
         </Drawer>
+        
+        <IconModal visible={true} onClose={null} onFinish={null} ></IconModal>
     </Spin>
   );
 };
