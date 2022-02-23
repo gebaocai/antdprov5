@@ -29,13 +29,13 @@ import * as allIcons from '@ant-design/icons';
 
   
 const IconModal: FC<IconModalProps> = (props) => {
-    const {visible, onFinish, onClose, selectIcon,selecteditem} = props;
+    const {visible, onFinish, onClose, selectIcon, selecteditem} = props;
 
     const showIcon = (icon: any, iconType = 'Outlined') => {
         if (typeof icon === 'string') {
             let fixIconName = icon.slice(0, 1).toLocaleUpperCase() + icon.slice(1) + iconType;
-            // let iconx = React.createElement(allIcons[fixIconName] || allIcons[icon], {className:classNames(styles.icon, {[styles.selectedicon]:icon===selecteditem}), onClick:selectIcon(icon)});    
-            let iconx = React.createElement(allIcons[fixIconName] || allIcons[icon], {className:classNames(styles.icon, {[styles.selectedicon]:icon===selecteditem})}); 
+            let iconx = React.createElement(allIcons[fixIconName] || allIcons[icon], {className:classNames(styles.icon, {[styles.selectedicon]:icon===selecteditem}), onClick:()=>selectIcon(icon)});    
+            // let iconx = React.createElement(allIcons[fixIconName] || allIcons[icon], {className:classNames(styles.icon, {[styles.selectedicon]:icon===selecteditem})}); 
             return iconx;
         }
         return;

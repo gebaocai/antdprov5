@@ -36,10 +36,13 @@ const PermissionDrawer: React.FC<PermissionDrawerProps> = (props) => {
   const [validateStatus, setValidateStatus] = useState<ValidateStatus>('success');
   const [show, setShow] = useState(true);
   const [menuType, setMenuType] = useState(record?.menuType);
+  const [icon, setIcon] = useState("");
+  const [iconChoose, setIconChoose] = useState(false);
 //   formRef?.current?.setFieldsValue(record)
   
   useEffect(() => {
     setMenuType(record?.menuType);
+    setIcon(record?.icon);
   }, [visible]);
 
   const onTreeChange = (value: 	string | string[]) => {
@@ -66,10 +69,24 @@ const PermissionDrawer: React.FC<PermissionDrawerProps> = (props) => {
   }
 
   const openIconChoose = () => {
-    
+    setIconChoose(true);
   }
 
-  
+  const selectIcon = (value:any) => {
+    console.log("selectIcon is "+ value);
+    setIcon(value);
+  }
+
+  const onIconChooseCancle = () => {
+    setIconChoose(false);
+  }
+
+  const onIconChooseFinish = (value:any) => {
+    formRef.current!.setFieldsValue({
+      icon: icon
+    });
+    setIconChoose(false);
+  }
 
   return (
     <Spin spinning={loading}>
@@ -199,7 +216,7 @@ const PermissionDrawer: React.FC<PermissionDrawerProps> = (props) => {
         </Card>
         </Drawer>
         
-        <IconModal visible={true} onClose={null} onFinish={null} ></IconModal>
+        <IconModal visible={iconChoose} onClose={onIconChooseCancle} onFinish={onIconChooseFinish} selectIcon={selectIcon} selecteditem={icon}></IconModal>
     </Spin>
   );
 };
