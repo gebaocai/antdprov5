@@ -157,7 +157,7 @@ const PermissionDrawer: React.FC<PermissionDrawerProps> = (props) => {
             <Form.Item
             hidden={!show}
             label="前端组件"
-            name="componentName"
+            name="component"
             rules={[{ required: true, message: '请输入前端组件!' }]}
             >
             <Input disabled={readonly}/>

@@ -21,6 +21,12 @@ declare namespace API {
     };
     address?: string;
     phone?: string;
+    permissionData?: PermissionData;
+  };
+
+  type PermissionData = {
+    menuData: any;
+    perms: any;
   };
 
   type LoginResult = {

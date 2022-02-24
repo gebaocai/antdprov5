@@ -38,8 +38,10 @@ const goto = () => {
   if (!history) return;
   setTimeout(() => {
     const { query } = history.location;
-    const { redirect } = query as { redirect: string };
-    history.push(redirect || '/');
+    let { redirect } = query as { redirect: any };
+    redirect=redirect===undefined?'/':redirect;
+    console.log(redirect);
+    history.push(redirect);
   }, 10);
 };
 
@@ -57,8 +59,12 @@ const Login: React.FC = () => {
   const fetchUserInfo = async () => {
     const userInfo = await initialState?.fetchUserInfo?.();
     if (userInfo) {
+      const menuData = userInfo?.permissionData?.menuData;
+      const perms = userInfo?.permissionData?.perms;
       setInitialState({
         ...initialState,
+        menuData: menuData,
+        perms: perms,
         currentUser: userInfo,
       });
     }
@@ -75,7 +81,7 @@ const Login: React.FC = () => {
           defaultMessage: '登录成功！',
         });
         localStorage.setItem('token', msg.data?.token);
-        alertMessage.success(defaultloginSuccessMessage);
+        alertMessage.success(defaultloginSuccessMessage); 
         await fetchUserInfo();
         goto();
         return;

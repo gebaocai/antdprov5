@@ -26,8 +26,8 @@ export const initialStateConfig = {
 export async function getInitialState(): Promise<{
   settings?: Partial<LayoutSettings>;
   currentUser?: API.CurrentUser;
-  menuData?: [];
-  perms?: [];
+  menuData?: any;
+  perms?: any;
   fetchUserInfo?: () => Promise<API.CurrentUser | undefined>;
 }> {
   const fetchUserInfo = async () => {
@@ -183,7 +183,7 @@ export const layout: RunTimeLayoutConfig = ({ initialState }) => {
         // initialState.currentUser 中包含了所有用户信息
         // const menuData = await fetchMenuData();
         // return menuData.data;
-        return initialState?.menuData;
+        return initialState.menuData;
       },
     },
     menuDataRender: (menuData) => fixMenuItemIcon(menuData),
