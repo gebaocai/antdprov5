@@ -19,7 +19,7 @@ jobs:
           node-version: '12.x'
       - name: Install dependencies
         run: yarn
-      - run: yarn run build
+      - run: yarn build
       - uses: actions/upload-artifact@v2
         with:
           name: antdv5
