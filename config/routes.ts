@@ -37,12 +37,6 @@
     component: './Welcome',
   },
   {
-    path: '/index',
-    name: 'index',
-    icon: 'smile',
-    component: './Index/',
-  },
-  {
     path: '/admin',
     name: 'admin',
     icon: 'crown',
@@ -55,6 +49,28 @@
         icon: 'smile',
         component: './Welcome',
       },
+    ],
+  },
+  {
+    path: '/dashboard',
+    icon: 'dashboard',
+    name: 'dashboard',
+    routes: [
+      {
+        path: '/dashboard/analysis',
+        name: 'analysis',
+        component: './dashboard/analysis',
+      },
+      {
+        path: '/dashboard/monitor',
+        name: 'monitor',
+        component: './dashboard/monitor',
+      },
+      {
+        path: '/dashboard/monitor',
+        name: 'monitor',
+        component: './dashboard/monitor',
+      }
     ],
   },
   {
@@ -96,7 +112,7 @@
   },
   {
     path: '/',
-    redirect: '/index',
+    redirect: '/welcome',
   },
   {
     component: '404',

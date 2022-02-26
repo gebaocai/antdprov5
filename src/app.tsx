@@ -186,9 +186,7 @@ export const layout: RunTimeLayoutConfig = ({ initialState }) => {
         return initialState?.menuData;
       },
     },
-    menuDataRender: (menuData) =>{
-      return fixMenuItemIcon(menuData)
-    },
+    menuDataRender: (menuData) => fixMenuItemIcon(menuData),
     // menuDataRender: {()=>fixMenuItemIcon()},
     // 自定义 403 页面
     // unAccessible: <div>unAccessible</div>,
