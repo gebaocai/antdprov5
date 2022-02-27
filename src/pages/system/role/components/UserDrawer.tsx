@@ -73,6 +73,17 @@ const UserDrawer: React.FC<UserDrawerProps> = (props) => {
     setDepartNames(departNames);
   };
 
+  const genderOptions = [
+    {
+    label: "男",
+    value: 1,
+    },
+    {
+    label: "女",
+    value: 2,
+    }
+  ];
+
   useEffect(()=>{
     // console.log("before optioins is " + options);
     if (user && !userRoleList.loading) {
@@ -172,9 +183,8 @@ const UserDrawer: React.FC<UserDrawerProps> = (props) => {
             label="性别"
             name="gender"
             >
-            <Select placeholder="请输入性别">
-                <Option value="1">男</Option>
-                <Option value="2">女</Option>
+            <Select placeholder="请输入性别" options={genderOptions}>
+                
             </Select>
             </Form.Item>
 
