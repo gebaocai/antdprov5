@@ -176,6 +176,7 @@ const UserDrawer: React.FC<UserDrawerProps> = (props) => {
             <Form.Item
             label="生日"
             name="birthday"
+            rules={[{ required: true, message: '请选择生日！!' }]}
             >
             <DatePicker placeholder="请选择生日！" style={{width: '100%'}}/>
             </Form.Item>
