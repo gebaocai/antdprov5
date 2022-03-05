@@ -37,7 +37,7 @@ const UserDrawer: React.FC<UserDrawerProps> = (props) => {
   const [departNames, setDepartNames] = useState<string>(user?.departNames);
   // const [options, setOptions] = useState(user?.roleIds);
 
-  if (user) {
+  if (user?.birthday) {
     user.birthday = moment(user?.birthday, 'YYYY-MM-DD');
   }
 
@@ -88,7 +88,7 @@ const UserDrawer: React.FC<UserDrawerProps> = (props) => {
     // console.log("before optioins is " + options);
     if (user && !userRoleList.loading) {
       formRef.current?.setFieldsValue({
-        roleIds: userRoleList.data
+        roleIds: userRoleList.data,
       });
     }
     const x = formRef.current?.getFieldValue('roleIds');

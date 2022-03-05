@@ -151,7 +151,7 @@ const UserPage: FC = () => {
   const onFinish = (fieldsValue: any) => {
     const values = {
       ...fieldsValue,
-      'date-picker': fieldsValue['birthday'].format('YYYY-MM-DD'),
+      'birthday': fieldsValue['birthday']?.format('YYYY-MM-DD'),
       'roleIds': fieldsValue['roleIds'].join(',')
     };
     console.log("onFinish " + values);

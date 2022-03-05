@@ -37,7 +37,7 @@ const UserDrawer: React.FC<UserDrawerProps> = (props) => {
   const [departNames, setDepartNames] = useState<string>(user?.departNames);
   // const [options, setOptions] = useState(user?.roleIds);
 
-  if (user) {
+  if (user?.birthday) {
     user.birthday = moment(user?.birthday, 'YYYY-MM-DD');
   }
 
@@ -176,9 +176,8 @@ const UserDrawer: React.FC<UserDrawerProps> = (props) => {
             <Form.Item
             label="生日"
             name="birthday"
-            rules={[{ required: true, message: '请选择生日！!' }]}
             >
-            <DatePicker placeholder="请选择生日！" style={{width: '100%'}}/>
+            <DatePicker placeholder="请选择生日！" style={{width: '100%'}} />
             </Form.Item>
             <Form.Item
             label="性别"
