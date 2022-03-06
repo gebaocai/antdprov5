@@ -1,57 +1,32 @@
-# Ant Design Pro
+### 快速启动
 
-This project is initialized with [Ant Design Pro](https://pro.ant.design). Follow is the quick guide for how to use.
+您的开发电脑需要安装：NodeJs（14.x）、npm或yarn（最新版）建议使用yarn、Mysql5.7、Jdk1.8、Maven3.6.3（最新版）、开发工具推荐idea
 
-## Environment Prepare
+* 前端：https://github.com/gebaocai/antdprov5
+* 后端：https://github.com/gebaocai/adal
+* 浏览器访问：http://localhost:8080
 
-Install `node_modules`:
+### 快速链接
+* 演示地址(admin/123456)：https://kr1.baocai.ga/
+* 后端地址：https://github.com/gebaocai/adal
 
-```bash
-npm install
-```
 
-or
+### 如何使用:
+
+#### 1、安装依赖包
 
 ```bash
 yarn
 ```
 
-## Provided Scripts
-
-Ant Design Pro provides some useful script to help you quick start and build with web project, code style check and test.
-
-Scripts provided in `package.json`. It's safe to modify or add additional script:
-
-### Start project
+#### 2、开始项目
 
 ```bash
-npm start
+yarn start
 ```
 
-### Build project
+#### 3、编译打包
 
 ```bash
-npm run build
+yarn build
 ```
-
-### Check code style
-
-```bash
-npm run lint
-```
-
-You can also use script to auto fix some lint error:
-
-```bash
-npm run lint:fix
-```
-
-### Test code
-
-```bash
-npm test
-```
-
-## More
-
-You can view full document on our [official website](https://pro.ant.design). And welcome any feedback in our [github](https://github.com/ant-design/ant-design-pro).
