@@ -84,7 +84,7 @@ const Login: React.FC = () => {
         alertMessage.success(defaultloginSuccessMessage); 
         await fetchUserInfo();
         goto();
-        return;
+        // return;
       }
       // 如果失败去设置用户错误信息
       setUserLoginState(msg);

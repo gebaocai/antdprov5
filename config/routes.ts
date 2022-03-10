@@ -111,6 +111,19 @@
     ],
   },
   {
+    path: '/monitor',
+    icon: 'setting',
+    name: 'monitor',
+    routes: [
+      {
+        path: '/monitor/machine',
+        name: 'machine',
+        icon: 'smile',
+        component: './monitor/machine',
+      },
+    ],
+  },
+  {
     path: '/',
     redirect: '/welcome',
   },
