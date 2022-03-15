@@ -99,15 +99,16 @@ const ChangePasswordModal: React.FC<CreateFormProps> = (props) => {
                   required={menuType!==0}
               >
           <TreeSelect
-              showSearch
+              // showSearch
               style={{ width: '100%' }}
               dropdownStyle={{ maxHeight: 400, overflow: 'auto' }}
               placeholder="请选择上级菜单!"
               allowClear
               treeDefaultExpandAll
+              treeNodeFilterProp="id"
               // onChange={onTreeChange}
               treeData={treeData}
-              defaultValue={model?.parentId}
+              value={model?.parentId}
           />
           </Form.Item>    
           <Form.Item
