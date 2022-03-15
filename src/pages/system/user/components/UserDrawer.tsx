@@ -44,7 +44,7 @@ const UserDrawer: React.FC<UserDrawerProps> = (props) => {
   const selectDepart=() => {
     
     if (user?.departIds) {
-      setShowDepartModal(user.departIds.split(","));
+      setCheckedKeys(user.departIds.split(","));
     }
     setShowDepartModal(true);
   }
