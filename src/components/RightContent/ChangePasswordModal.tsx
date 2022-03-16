@@ -7,11 +7,10 @@ type CreateFormProps = {
   modalVisible: boolean;
   onCancel: () => void;
   onFinish: (values:any) => void;
-  model: any;
 };
 
 const ChangePasswordModal: React.FC<CreateFormProps> = (props) => {
-  const { modalVisible, model, onFinish, onCancel } = props;
+  const { modalVisible, onFinish, onCancel } = props;
   
 
   const onFinishFailed = (errorInfo: any) => {
@@ -44,14 +43,16 @@ const ChangePasswordModal: React.FC<CreateFormProps> = (props) => {
         name="basic"
         labelCol={labelCol}
         wrapperCol={wrapperCol}
-        initialValues={model}
         onFinish={onFinish}
         onFinishFailed={onFinishFailed}
       >
-        <Form.Item
-            name="id"
-            hidden
-            />  
+      <Form.Item
+            label="当前密码"
+            name="curPassword"
+            rules={[{ required: true, message: '请输入密码!' }]}
+            >
+            <Input.Password />
+        </Form.Item>
 
         <Form.Item
             label="密码"

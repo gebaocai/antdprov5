@@ -78,15 +78,16 @@ const codeMessage = {
 
 const errorHandler = (error: { name: string, data: any, info: any, response: Response }): Response => {
 
+  const { response } = error;
   if (error.name === "BizError") {
     notification.error({
       message: `请求错误 ${error.info.errorCode}`,
       description: error.info.errorMessage,
     });
-    return error.info.errorCode;
+    return response;
   }
 
-  const { response } = error;
+
   if (response && response.status) {
     const errorText = codeMessage[response.status] || response.statusText;
     const { status, url } = response;
@@ -130,8 +131,8 @@ export const request: RequestConfig = {
   errorConfig: {
     adaptor: (res:any) => {
       return {
+        ...res,
         success: res.code === 200,
-        data: res.data,
         errorCode: res.code,
         errorMessage: res.message,
         showType: 4,
