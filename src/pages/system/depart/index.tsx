@@ -2,7 +2,7 @@ import { useRequest } from 'umi';
 import React, { useState, useRef, useEffect } from 'react';
 import { Space, Row, Col, Tree, Tabs, Button, Card, Spin, message } from 'antd';
 import { depart, departList} from './service';
-import { permissionTree, departPermission, editDepart, addDepart, editDepartPermission} from './service';
+import { permissionTree, departPermission, editDepart, addDepart, editDepartPermission, exportExcel} from './service';
 import DepartModal  from './components/DepartModal';
 import EditDepartPermissionForm  from './components/EditDepartPermissionForm';
 import EditDepartForm  from './components/EditDepartForm';
@@ -10,6 +10,7 @@ import styles from './style.less';
 import {Input, Alert } from 'antd';
 import {DepartData} from './data';
 import { FormInstance } from 'antd/es/form';
+import { WindowsFilled } from '@ant-design/icons';
 
 
 const { TabPane } = Tabs;
@@ -37,6 +38,11 @@ const TableList: React.FC = () => {
       }
     }
     console.log(num);
+  };
+
+  const handleExport = () => {
+    exportExcelReq.run();
+    // window.open('/api/sys/sysDepart/export')
   };
 
   const onCancle = () => {
@@ -138,6 +144,7 @@ const TableList: React.FC = () => {
   const permissionListReq = useRequest(permissionTree, {manual: true});
   const departPermissionReq = useRequest(departPermission, {manual: true});
   const editDepartPermissionReq = useRequest(editDepartPermission, {manual: true});
+  const exportExcelReq = useRequest(exportExcel, {manual: true});
 
   return (
       <Row justify="space-between" gutter={[16, { xs: 8, sm: 16, md: 24, lg: 32 }]}>
@@ -146,8 +153,7 @@ const TableList: React.FC = () => {
             <Space size='small'>
               <Button type="primary" onClick={()=>handleAdd(1)}>添加部门</Button>
               <Button type="primary" onClick={()=>handleAdd(2)}>添加下级</Button>
-              <Button type="primary">导出</Button>
-              <Button type="primary">导入</Button>
+              <Button type="primary" onClick={()=>handleExport()}>导出</Button>
               <Button type="primary" danger>删除</Button>
             </Space>
             

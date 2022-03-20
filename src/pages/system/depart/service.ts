@@ -83,3 +83,32 @@ export async function editDepartPermission(body: any, options?: { [key: string]:
     ...(options || {}),
   });
 }
+
+export async function exportExcel(options?: { [key: string]: any }) {
+  const token = localStorage.getItem("token");
+  const authHeader = { Authorization: `Bearer ${token}` };
+  let filename = "";
+  return fetch('/api/sys/sysDepart/export', {
+    method: 'GET',
+    responseType: 'blob',
+    headers: authHeader,
+    parseResponse: false
+  }).then((res:any) => {
+    let contentDisposition = res.headers.get("content-disposition");
+    console.log(contentDisposition);
+    contentDisposition = contentDisposition.replace("attachment; filename=", "");
+    contentDisposition = contentDisposition.replaceAll("\"", "");
+    console.log(contentDisposition);
+    filename = contentDisposition;
+    res.blob()
+  .then((res:any) => {
+    console.log(res);
+    const aLink = document.createElement('a');
+    document.body.appendChild(aLink);
+    aLink.style.display = 'none';
+    aLink.href = window.URL.createObjectURL(res);
+    aLink.setAttribute('download', filename);
+    aLink.click();
+    document.body.removeChild(aLink);
+  })})
+}
